@@ -1,0 +1,115 @@
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+header .logo img {
+  width: 100px;
+  display: block;
+  margin: 0 auto;
+}
+
+header {
+  border-bottom: 2.5px solid #50A055;
+}
+
+nav {
+  padding: 5px 0;
+}
+
+nav ul {
+  list-style: none;   /* tira as bolinhas */
+  margin: 0;
+  padding: 0;
+  display: flex;      /* coloca os itens em linha */
+  justify-content: center; /* centraliza no meio */
+  gap: 20px;          /* espaço entre os itens */
+}
+
+nav ul li a {
+  text-decoration: none;  /* tira o sublinhado */
+  color: #2E4057;         /* cor verde, pode mudar */
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+nav ul li a:hover {
+  color: #27ae60; /* cor ao passar o mouse */
+}
+
+.brand {
+  font-family: 'Tinos', serif;
+  font-size: 3rem;
+  font-family: "Tinos", serif;
+  font-weight: 00;
+  font-style: italic;
+}
+
+.hero {
+  padding: 60px 20px;
+}
+
+.hero .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero-text {
+  text-align: center;
+}
+
+.hero-text h1 {
+  font-size: 2.5rem;
+  color: #222;
+}
+
+.hero-text .brand {
+  color: #2ecc71; /* verde para destacar */
+}
+
+.hero-text p {
+  margin: 20px 0;
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 700px;
+}
+
+.hero-text .btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #2ecc71;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+.hero-text .btn:hover {
+  background: #27ae60;
+}
+
+.hero-img img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Responsivo */
+@media (min-width: 768px) {
+  .hero .container {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .hero-text {
+    flex: 1;
+  }
+
+  .hero-img {
+    flex: 1;
+  }
+}
