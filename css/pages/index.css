@@ -45,7 +45,8 @@ nav ul li a:hover {
 }
 
 .hero {
-  padding: 60px 20px;
+  padding: 60px 20px 0px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* sombra suave embaixo */
 }
 
 .hero .container {
@@ -93,8 +94,7 @@ nav ul li a:hover {
 
 .hero-img img {
   max-width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  display: block;
 }
 
 /* Responsivo */
@@ -112,4 +112,48 @@ nav ul li a:hover {
   .hero-img {
     flex: 1;
   }
+
+  button:focus, a:focus {
+    outline: 3px solid #00aaff;
+  }
+  
+  /* Estilo da seção About */
+  .about {
+    background: #f9fafb;
+    padding: 60px 20px;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* sombra em cima da seção About */
+  }  
+
+.about .container {
+  max-width: 900px;           /* limita a largura */
+  margin: 0 auto;             /* centraliza */
+  text-align: center;         /* centraliza o texto */
+}
+
+.about h2 {
+  font-size: 2rem;
+  color: #2ecc71;             /* verde da identidade */
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+}
+
+.about h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #2ecc71;
+  margin: 8px auto 0;         /* linha abaixo do título */
+  border-radius: 2px;
+}
+
+.about p {
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.7;
+  text-align: justify;        /* deixa o texto alinhado */
+  margin-top: 20px;
+}
+
 }
