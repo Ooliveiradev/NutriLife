@@ -50,35 +50,5 @@
       </div>
     </section>  
   </main>
-  
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-  
-    const SUPABASE_URL = 'https://SEU-PROJ.supabase.co'
-    const SUPABASE_ANON_KEY = 'SUA_ANON_KEY'
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  
-    // LISTAR POSTS (página do blog)
-    async function loadPosts() {
-      const { data, error } = await supabase
-        .from('posts')
-        .select('id,title,slug,category,cover_url,published_at')
-        .order('published_at', { ascending: false })
-        .limit(12)
-  
-      if (error) { console.error(error); return }
-      const grid = document.querySelector('.blog-grid')
-      grid.innerHTML = data.map(p => `
-        <article class="post">
-          ${p.cover_url ? `<img src="${p.cover_url}" alt="Capa do post ${p.title}" />` : ''}
-          <span class="category">${p.category ?? ''}</span>
-          <h3><a href="/post.html?slug=${p.slug}">${p.title}</a></h3>
-          <small>${new Date(p.published_at).toLocaleDateString('pt-BR')}</small>
-        </article>
-      `).join('')
-    }
-  
-    loadPosts()
-  </script>  
 </body>
 </html>

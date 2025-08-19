@@ -28,28 +28,26 @@
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-    const url = new URL(location.href)
-    const slug = url.searchParams.get('slug')
-  
-    const supabase = createClient('https://SEU-PROJ.supabase.co', 'SUA_ANON_KEY')
-  
-    const { data: post } = await supabase
-      .from('posts')
-      .select('*')
-      .eq('slug', slug)
-      .single()
-  
-    if (post) {
-      document.querySelector('h1').textContent = post.title
-      if (post.cover_url) {
+  <script>
+    function getSlug(){ return new URL(location.href).searchParams.get('slug') }
+    async function loadPost(){
+      const slug = getSlug()
+      const res  = await fetch('/data/posts.json', { cache: 'no-store' })
+      const db   = await res.json()
+      const post = db.items.find(p => p.slug === slug)
+      if(!post){ document.getElementById('title').textContent = 'Post não encontrado.'; return }
+      document.title = post.title + ' — NutriLife'
+      document.getElementById('title').textContent = post.title
+      document.getElementById('meta').textContent  =
+        `${post.category ?? ''} • ${new Date(post.date).toLocaleDateString('pt-BR')}`
+      if(post.cover){
         document.querySelector('.cover').innerHTML =
-          `<img src="${post.cover_url}" alt="Capa do post ${post.title}">`
+          `<img src="${post.cover}" alt="Capa do post ${post.title}">`
       }
-      document.querySelector('.content').innerHTML = post.content  // pode ser HTML sanitizado ou Markdown renderizado
+      // Renderiza Markdown em HTML
+      document.getElementById('content').innerHTML = marked.parse(post.content || '')
     }
+    loadPost()
   </script>
-  
 </body>
 </html>
