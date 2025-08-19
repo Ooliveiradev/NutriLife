@@ -42,6 +42,20 @@
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 38px;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+}
+
+/* Garantir que o select seja clicável */
+.blog .filters select:hover {
+  border-color: #22c55e;
+}
+
+.blog .filters select:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34,197,94,0.12);
+  outline: none;
 }
 
 /* Layout responsivo: 3 colunas (busca + 2 selects) em telas maiores */
