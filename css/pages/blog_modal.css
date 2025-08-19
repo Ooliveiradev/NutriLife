@@ -1,22 +1,25 @@
 
-/* ---------- Global Modal Layer ---------- */
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.35); /* slate-900/35 */
+  background: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(6px) saturate(110%);
   -webkit-backdrop-filter: blur(6px) saturate(110%);
   z-index: 90;
   display: none;
   opacity: 0;
+  pointer-events: none;
   transition: opacity .2s ease;
 }
+
 .modal-overlay.active {
   display: block;
   opacity: 1;
+  pointer-events: auto;
 }
 
-/* ---------- Card/Container ---------- */
+/* Modal Container */
 .modal {
   position: fixed;
   left: 50%;
@@ -28,41 +31,77 @@
   box-shadow: 0 30px 50px -20px rgba(2, 6, 23, 0.35);
   z-index: 99;
   display: none;
+  height: 70vh;
+  max-height: 70vh;
+  overflow: hidden;
 }
-.modal.active { display: grid; }
 
+.modal.active {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+/* Modal Header */
 .modal header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 18px;
   border-bottom: 1px solid #eef2f7;
+  box-sizing: border-box;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
 }
+
 .modal header h3 {
   font-size: 1.2rem;
   color: #0f172a;
 }
+
 .modal header .close-btn {
   background: #eef2f7;
   border: none;
   padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 10px;
 }
 
+/* Modal Body */
 .modal .body {
   padding: 18px;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-}
-.modal .row {
-  display: grid;
-  gap: 12px;
-}
-@media (min-width: 720px) {
-  .modal .row.two { grid-template-columns: 1fr 280px; }
+  height: calc(100% - 60px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
+/* Form Layout */
+.modal .row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 720px) {
+  .modal .row.two { 
+    flex-direction: row; 
+    gap: 12px;
+  }
+  
+  .modal .row.two input {
+    flex: 1;
+  }
+}
+
+/* Form Inputs */
 .modal input[type="text"],
 .modal input[type="email"],
 .modal input[type="password"],
@@ -72,9 +111,19 @@
   border-radius: 12px;
   outline: none;
   font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  resize: none !important;
+  overflow: hidden;
+  height: 48px;
 }
-.modal textarea { min-height: 160px; resize: vertical; }
 
+.modal textarea { 
+  height: 200px;
+  overflow: auto;
+}
+
+/* Buttons */
 .modal .actions {
   display: flex;
   align-items: center;
@@ -84,7 +133,9 @@
 }
 
 .btn {
-  display: inline-flex; align-items: center; justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 10px 16px;
   border-radius: 12px;
@@ -93,83 +144,43 @@
   cursor: pointer;
   transition: filter .15s ease, transform .02s ease;
 }
-.btn:active { transform: translateY(1px); }
-.btn-primary { background: #22c55e; color: #fff; }
-.btn-secondary { background: #eef2f7; color: #0f172a; }
-.btn-danger { background: #ef4444; color: #fff; }
-.hidden { display: none !important; }
 
-/* ---------- Header Login Button ---------- */
-.header-actions {
+.btn:active { 
+  transform: translateY(1px); 
+}
+
+.btn-primary { 
+  background: #22c55e; 
+  color: #fff; 
+}
+
+.btn-secondary { 
+  background: #eef2f7; 
+  color: #0f172a; 
+}
+
+.btn-danger { 
+  background: #ef4444; 
+  color: #fff; 
+}
+
+.hidden { 
+  display: none !important; 
+}
+
+/* Post Form Specific */
+#post-form {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-  padding-right: 30px;
-}
-#open-login {
-  font-size: .95rem;
-  padding: 8px 14px;
-}
-.badge-green {
-  padding: 4px 10px;
-  background: #eafff3;
-  color: #15803d;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: .85rem;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
 }
 
-
-/* ==== Fix: modal close + backdrop blur ==== */
-/* Overlay com blur e clique para fechar */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.35);            /* escurece */
-  backdrop-filter: blur(6px) saturate(110%);     /* BLUR de fundo */
-  -webkit-backdrop-filter: blur(6px) saturate(110%);
-  z-index: 90;
-  display: none;
-  opacity: 0;
-  pointer-events: none;                          /* não captura clique quando escondido */
-  transition: opacity .2s ease;
-}
-.modal-overlay.active {
-  display: block;
-  opacity: 1;
-  pointer-events: auto;                          /* captura clique para fechar */
+#post-form .row.two {
+  flex-shrink: 0;
 }
 
-/* Mantém controle de visibilidade pelo .active */
-.modal { display: none; }
-.modal.active {
-  display: grid;
-  grid-template-rows: auto 1fr;                  /* header fixo + corpo rolável */
-}
-
-/* Altura e rolagem internas dos modais específicos */
-#post-modal,
-#view-modal,
-#login-modal {
-  height: 70vh;
-  max-height: 70vh;
-  overflow: hidden;                               /* esconde overflow externo */
-}
-#post-modal .body,
-#view-modal .body,
-#login-modal .body {
-  overflow: auto;                                 /* rolagem interna */
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Header fixo no topo durante a rolagem */
-#post-modal header,
-#view-modal header,
-#login-modal header {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 1;
+#post-form textarea {
+  flex: 1;
+  min-height: 200px;
 }
