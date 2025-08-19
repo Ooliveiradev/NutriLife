@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog — NutriLife</title>
+  <link rel="stylesheet" href="css/links/link.css">
+  <style>
+    .blog { padding: 48px 16px; }
+    .blog .container { max-width: 1100px; margin: 0 auto; text-align: center; }
+    .blog-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 24px; }
+    .post-card { background:#f9fafb; border-radius:14px; padding:18px; text-align:left; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+    .post-card img{ width:100%; height:auto; border-radius:10px; display:block; margin-bottom:12px; }
+    .post-card .category{ font-size:.85rem; color:#27ae60; font-weight:700; text-transform:uppercase; }
+    .post-card h3{ margin:8px 0; font-size:1.35rem; color:#2e4057; }
+    .post-card a{ color:#2ecc71; text-decoration:none; font-weight:700; }
+    .post-card a:hover{ text-decoration:underline; }
+    @media (min-width: 768px){ .blog-grid{ grid-template-columns: repeat(3,1fr); } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="images/logo/ChatGPT-Image-17-de-ago.-de-2025_-11_02_59.svg" alt="Logo da marca NutriLife com maçã verde estilizada e garfo no centro, acompanhada do nome em tipografia moderna verde.">
+    </div>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="#">Calculadora de IMC</a></li>
+      <li><a href="#">Calculadora de Calorias</a></li>
+      <li><a href="#">Banco de Receitas</a></li>
+      <li><a href="#">Diário Alimentar</a></li>
+    </ul>
+  </nav>
+  <section class="blog">
+    <div class="container">
+      <h1>Blog e Artigos</h1>
+      <p>Alimentação balanceada, mitos e verdades, treino e saúde mental.</p>
+      <div class="blog-grid" id="blogGrid"></div>
+    </div>
+  </section>
+
+  <!-- Markdown renderer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    async function loadPosts(){
+      const res = await fetch('/data/posts.json', { cache: 'no-store' })
+      const db  = await res.json()
+      const posts = db.items
+        .slice()
+        .sort((a,b)=> new Date(b.date) - new Date(a.date))
+
+      const grid = document.getElementById('blogGrid')
+      grid.innerHTML = posts.map(p => `
+        <article class="post-card">
+          ${p.cover ? `<img src="${p.cover}" alt="Capa do post ${p.title}">` : ''}
+          <span class="category">${p.category ?? ''}</span>
+          <h3><a href="post.html?slug=${encodeURIComponent(p.slug)}">${p.title}</a></h3>
+          <small>${new Date(p.date).toLocaleDateString('pt-BR')}</small>
+        </article>
+      `).join('')
+    }
+    loadPosts()
+  </script>
+</body>
+</html>
