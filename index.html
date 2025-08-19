@@ -6,7 +6,14 @@
   <title>NutriLife</title>
   <link rel="stylesheet" href="css/links/link.css">
   <link rel="shortcut icon" href="images/favicon/ChatGPT_Image_17_de_ago._de_2025__12_17_23-removebg-preview-_2_.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/pages/blog.css">
 </head>
+<script src="js/blog.js"></script>
+<!-- 1) Config com suas chaves (global window.FIREBASE_CONFIG e ADMIN_UIDS) -->
+<script src="js/firebase-config.js"></script>
+
+<!-- 2) Blog com Firestore (módulo ES) -->
+<script type="module" src="js/blog_firebase.js"></script>
 <body>
   <header>
     <div class="logo">
@@ -47,7 +54,81 @@
           Ao oferecer recursos como calculadora de IMC, cálculo de calorias, banco de receitas e diário alimentar, o site busca não apenas informar, mas também facilitar a aplicação prática desses conhecimentos no cotidiano dos usuários. Dessa forma, o projeto contribui para a promoção da saúde e qualidade de vida, integrando tecnologia e informação de maneira didática e responsável.
         </p>
       </div>
-    </section>  
+    </section>
+    <section id="blog" class="blog">
+      <div class="container">
+        <header class="blog-header">
+          <h2>Blog</h2>
+          <p>Publique conteúdos e categorize (low carb, vegetariana, esportiva, etc.).</p>
+        </header>
+    
+        <!-- Formulário de criação/edição -->
+        <form id="blog-form" class="controls" autocomplete="off">
+          <input type="hidden" id="post-id">
+    
+          <div class="row">
+            <input id="post-title" type="text" placeholder="Título da postagem *" required>
+            <input id="post-category" type="text" list="categories" placeholder="Categoria (ex.: Dieta Low Carb)">
+            <datalist id="categories">
+              <option value="Dieta Low Carb"></option>
+              <option value="Vegetariana"></option>
+              <option value="Vegana"></option>
+              <option value="Esportiva"></option>
+            </datalist>
+          </div>
+    
+          <div class="row">
+            <textarea id="post-content" placeholder="Escreva seu conteúdo *" required></textarea>
+          </div>
+    
+          <div class="actions">
+            <label><input type="checkbox" id="post-pinned"> Fixar no topo</label>
+            <button id="submit-btn" class="btn btn-primary" type="submit">Publicar</button>
+            <button id="cancel-edit" class="btn btn-secondary hidden" type="button">Cancelar edição</button>
+          </div>
+        </form>
+    
+        <!-- Filtros e busca -->
+        <div class="filters">
+          <input id="filter-search" type="text" placeholder="Buscar por palavra‑chave">
+          <div class="row">
+            <select id="filter-category" title="Categoria"></select>
+            <select id="filter-sort" title="Ordenar">
+              <option value="newest">Mais recentes</option>
+              <option value="oldest">Mais antigas</option>
+              <option value="title">Título (A–Z)</option>
+            </select>
+          </div>
+        </div>
+    
+        <!-- Lista de posts -->
+        <div id="post-list" class="post-list"></div>
+      </div>
+    </section>
+    
   </main>
 </body>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBFnEcrrEK2Q-sTwsytZbjBygdac94ElF4",
+    authDomain: "nutri-life-436ae.firebaseapp.com",
+    projectId: "nutri-life-436ae",
+    storageBucket: "nutri-life-436ae.firebasestorage.app",
+    messagingSenderId: "1041931544112",
+    appId: "1:1041931544112:web:35a86a7b2a2a1d68b52ff5",
+    measurementId: "G-1KDB8JDS5V"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </html>
