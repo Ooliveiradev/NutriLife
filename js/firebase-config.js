@@ -15,5 +15,5 @@ window.FIREBASE_CONFIG = {
 
 // UIDs de administradores (encontre no painel de Authentication após criar os usuários)
 window.NUTRILIFE_ADMIN_UIDS = [
-  Pkfvcnfw8aWtdH6QAdcDQQVkF7i2
+  "Pkfvcnfw8aWtdH6QAdcDQQVkF7i2"
 ];

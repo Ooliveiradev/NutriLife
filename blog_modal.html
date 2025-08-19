@@ -1,0 +1,51 @@
+
+<!-- Login e ações -->
+<div id="blog-login-box">
+  <form id="blog-login-form" class="controls" autocomplete="off">
+    <p id="whoami" style="margin-bottom:8px">Não logado</p>
+    <div class="row">
+      <input id="blog-email" type="email" placeholder="E-mail" required>
+      <input id="blog-pass" type="password" placeholder="Senha" required>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" type="submit">Entrar</button>
+      <button id="blog-logout" class="btn btn-secondary" type="button">Sair</button>
+    </div>
+  </form>
+</div>
+
+<div style="display:flex;gap:8px;align-items:center;margin:12px 0">
+  <button id="open-post-modal" class="btn btn-primary">Criar post</button>
+  <span id="whoami"></span>
+</div>
+
+<!-- Modal/backdrop -->
+<div id="post-modal-backdrop" class="hidden"></div>
+<div id="post-modal" class="hidden">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Novo post</h3>
+      <button class="modal-close" type="button">Fechar</button>
+    </div>
+    <form id="blog-form" class="controls" autocomplete="off">
+      <input type="hidden" id="post-id">
+      <div class="row">
+        <input id="post-title" type="text" placeholder="Título *" required>
+        <input id="post-category" type="text" list="categories" placeholder="Categoria">
+        <datalist id="categories">
+          <option value="Dieta Low Carb"></option>
+          <option value="Vegetariana"></option>
+          <option value="Vegana"></option>
+          <option value="Esportiva"></option>
+        </datalist>
+      </div>
+      <div class="row">
+        <textarea id="post-content" placeholder="Conteúdo *" required></textarea>
+      </div>
+      <div class="actions">
+        <label><input type="checkbox" id="post-pinned"> Fixar no topo</label>
+        <button id="submit-btn" class="btn btn-primary" type="submit">Publicar</button>
+      </div>
+    </form>
+  </div>
+</div>

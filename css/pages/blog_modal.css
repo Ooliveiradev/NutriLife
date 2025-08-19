@@ -1,0 +1,37 @@
+
+/* Modal overlay */
+#post-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5);
+  display: none;
+  z-index: 40;
+}
+#post-modal {
+  position: fixed; inset: 0;
+  display: none;
+  z-index: 50;
+  padding: 24px;
+  overflow: auto;
+}
+#post-modal .modal-card {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+#post-modal .modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+#post-modal .modal-header h3 { margin: 0; }
+#post-modal .modal-close {
+  border: none; background: #eef2f7; border-radius: 8px; padding: 8px 12px; cursor: pointer;
+}
+
+#post-modal-backdrop.show, #post-modal.show { display: block; }
+
+/* helpers */
+.hidden{display:none}
