@@ -4,6 +4,7 @@
   background: #ffffff;
   padding: 60px 20px;
   border-top: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px inset rgba(0, 0, 0, 0.1);
 }
 
 .blog .container {

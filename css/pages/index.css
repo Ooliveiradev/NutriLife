@@ -119,9 +119,10 @@ nav ul li a:hover {
   
   /* Estilo da seção About */
   .about {
-    background: #f9fafb;
+    background: #E2E2D8;
     padding: 60px 20px;
-    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* sombra em cima da seção About */
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+     /* sombra em cima da seção About */
   }  
 
 .about .container {
@@ -150,7 +151,7 @@ nav ul li a:hover {
 
 .about p {
   font-size: 1.1rem;
-  color: #444;
+  color: #2E4057;
   line-height: 1.7;
   text-align: justify;        /* deixa o texto alinhado */
   margin-top: 20px;
