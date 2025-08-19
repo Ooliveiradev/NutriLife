@@ -1,10 +1,5 @@
 
-// NutriLife Blog - Firebase Firestore (private read)
-// - Leitura: apenas usuários autenticados (qualquer logado)
-// - Escrita: apenas UIDs de admin (lista em firebase-config.js)
-// - Modal de criação/edição que sobrepõe a página
-// - Tempo real com onSnapshot
-
+// Blog NutriLife - Firestore (leitura privada) + modal de login e modal de post
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
@@ -14,97 +9,118 @@ import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
+// ---- CONFIG ----
 const firebaseConfig = window.FIREBASE_CONFIG;
 const ADMIN_UIDS = window.NUTRILIFE_ADMIN_UIDS || [];
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// utils
+// ---- DOM utils ----
 const $ = (sel, el=document) => el.querySelector(sel);
 const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
-const escapeHtml = (str='') => String(str).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const fmtDate = (ts) => { if (!ts) return '-'; const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleString(); };
+const esc = (s)=>String(s).replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt = (ts)=> ts?.toDate ? ts.toDate().toLocaleString() : "-";
 
-// elements
+// ---- Elements ----
 const listEl = $('#post-list');
 const searchEl = $('#filter-search');
 const catFilterEl = $('#filter-category');
 const sortEl = $('#filter-sort');
-const who = $('#whoami');
 
-// modal elements
-const openModalBtn = $('#open-post-modal');      // botão "Criar post"
-const modal = $('#post-modal');
-const modalBackdrop = $('#post-modal-backdrop');
-const closeModalBtns = $$('.modal-close');
-const form = $('#blog-form');
+// header login button
+const openLoginBtn = $('#open-login');
+const logoutBtn = $('#logout-btn');
+const whoami = $('#whoami');
+
+// login modal
+const loginOverlay = $('#login-overlay');
+const loginModal = $('#login-modal');
+const loginForm = $('#login-form');
+const loginClose = $('#login-close');
+
+// post modal
+const postOverlay = $('#post-overlay');
+const postModal = $('#post-modal');
+const postOpenBtn = $('#open-post-modal');
+const postCloseBtn = $('#post-close');
+const submitBtn = $('#submit-btn');
+const cancelEditBtn = $('#cancel-edit');
+
+// post form fields
 const idEl = $('#post-id');
 const titleEl = $('#post-title');
 const contentEl = $('#post-content');
 const categoryEl = $('#post-category');
 const pinnedEl = $('#post-pinned');
-const submitBtn = $('#submit-btn');
-
-// auth box
-const loginBox = $('#blog-login-box');
-const loginForm = $('#blog-login-form');
-const emailEl = $('#blog-email');
-const passEl = $('#blog-pass');
-const logoutBtn = $('#blog-logout');
 
 let currentUser = null;
 let isAdmin = false;
-let unsubPosts = null;
 let postsCache = [];
 
-// UI helpers
-function show(el){ el?.classList.remove('hidden'); el?.classList.add('show'); }
-function hide(el){ el?.classList.add('hidden'); el?.classList.remove('show'); }
-function openModal(){ show(modalBackdrop); show(modal); titleEl.focus(); }
-function closeModal(){ hide(modalBackdrop); hide(modal); resetForm(); }
+// ---- UI helpers ----
+function toggle(el, state) {
+  if (!el) return;
+  el.classList[state ? 'add' : 'remove']('active');
+}
+function openModal(overlay, modal){ toggle(overlay, true); toggle(modal, true); }
+function closeModal(overlay, modal){ toggle(modal, false); setTimeout(()=>toggle(overlay,false), 50); }
 
-closeModalBtns.forEach(b => b.addEventListener('click', closeModal));
-modalBackdrop?.addEventListener('click', closeModal);
-openModalBtn?.addEventListener('click', () => {
-  if (!currentUser) { alert('Faça login para criar um post.'); return; }
-  if (!isAdmin) { alert('Apenas administradores podem publicar.'); return; }
-  openModal();
-});
+function resetForm(){
+  idEl.value=''; titleEl.value=''; contentEl.value=''; categoryEl.value=''; pinnedEl.checked=false;
+  submitBtn.textContent='Publicar'; cancelEditBtn.classList.add('hidden');
+}
 
-// auth
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-  isAdmin = !!(user && ADMIN_UIDS.includes(user.uid));
-  if (who) who.textContent = user ? (isAdmin ? 'Logado como admin' : 'Logado') : 'Não logado';
-
-  if (user) {
-    hide(loginBox);
-    watchPosts();  // começa observar posts só quando logado
+function updateHeaderState(){
+  if (currentUser) {
+    whoami.innerHTML = `<span class="badge-green">Logado</span>`;
+    openLoginBtn.classList.add('hidden');
+    logoutBtn.classList.remove('hidden');
+    postOpenBtn.classList.remove('hidden'); // só deixa visível; permissão validamos no submit
   } else {
-    show(loginBox);
-    postsCache = [];
-    render();
-    if (typeof unsubPosts === 'function') { unsubPosts(); unsubPosts = null; }
+    whoami.innerHTML = `<span class="badge-green">Visitante</span>`;
+    openLoginBtn.classList.remove('hidden');
+    logoutBtn.classList.add('hidden');
+    postOpenBtn.classList.add('hidden');
   }
+}
+
+onAuthStateChanged(auth, (user)=>{
+  currentUser = user || null;
+  isAdmin = !!(user && ADMIN_UIDS.includes(user.uid));
+  updateHeaderState();
+  // ao logar/deslogar, recarrega a lista (onSnapshot já está ativo)
 });
 
-loginForm?.addEventListener('submit', async (e) => {
+// ---- login modal events ----
+openLoginBtn?.addEventListener('click', ()=> openModal(loginOverlay, loginModal));
+loginClose?.addEventListener('click', ()=> closeModal(loginOverlay, loginModal));
+loginOverlay?.addEventListener('click', (e)=> { if(e.target===loginOverlay) closeModal(loginOverlay, loginModal); });
+loginForm?.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  try {
-    await signInWithEmailAndPassword(auth, emailEl.value.trim(), passEl.value.trim());
-    emailEl.value = ''; passEl.value = '';
-  } catch (err) {
-    alert('Falha no login: ' + err.message);
+  const email = $('#login-email').value.trim();
+  const pass = $('#login-pass').value.trim();
+  try{
+    await signInWithEmailAndPassword(auth, email, pass);
+    closeModal(loginOverlay, loginModal);
+  } catch(err){
+    alert('Falha no login: '+ err.message);
   }
 });
+logoutBtn?.addEventListener('click', ()=> signOut(auth));
 
-logoutBtn?.addEventListener('click', async () => {
-  await signOut(auth);
+// ---- post modal events ----
+postOpenBtn?.addEventListener('click', ()=> {
+  if (!currentUser) { alert('Você precisa estar logado.'); return; }
+  if (!isAdmin) { alert('Sem permissão para publicar.'); return; }
+  resetForm();
+  openModal(postOverlay, postModal);
 });
+postCloseBtn?.addEventListener('click', ()=> closeModal(postOverlay, postModal));
+postOverlay?.addEventListener('click', (e)=> { if(e.target===postOverlay) closeModal(postOverlay, postModal); });
+cancelEditBtn?.addEventListener('click', ()=> { resetForm(); closeModal(postOverlay, postModal); });
 
-// form
+// ---- CRUD ----
 function getFormData(){
   return {
     id: idEl.value || null,
@@ -114,160 +130,111 @@ function getFormData(){
     pinned: pinnedEl.checked
   };
 }
-function resetForm(){
-  idEl.value = '';
-  titleEl.value = '';
-  contentEl.value = '';
-  categoryEl.value = '';
-  pinnedEl.checked = false;
-  submitBtn.textContent = 'Publicar';
-}
 
-form?.addEventListener('submit', async (e) => {
+$('#post-form')?.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  if (!currentUser) { alert('Faça login.'); return; }
-  if (!isAdmin) { alert('Apenas administradores podem publicar.'); return; }
+  if (!currentUser) return alert('Faça login para publicar.');
+  if (!isAdmin) return alert('Apenas administradores podem publicar.');
   const data = getFormData();
-  if (!data.title || !data.content) { alert('Título e conteúdo são obrigatórios.'); return; }
-  try {
-    if (data.id) {
+  if (!data.title || !data.content) return alert('Título e conteúdo são obrigatórios.');
+  try{
+    if (data.id){
       await updateDoc(doc(db, 'posts', data.id), {
-        title: data.title,
-        content: data.content,
-        category: data.category,
-        pinned: data.pinned,
+        title: data.title, content: data.content, category: data.category, pinned: data.pinned,
         updatedAt: serverTimestamp()
       });
     } else {
       await addDoc(collection(db, 'posts'), {
-        title: data.title,
-        content: data.content,
-        category: data.category,
-        pinned: data.pinned,
-        createdAt: serverTimestamp(),
-        updatedAt: null,
-        authorUid: currentUser.uid
+        title: data.title, content: data.content, category: data.category, pinned: data.pinned,
+        createdAt: serverTimestamp(), updatedAt: null, authorUid: currentUser.uid
       });
     }
-    closeModal();
-  } catch (err) {
-    alert('Erro ao salvar: ' + err.message);
-  }
+    resetForm(); closeModal(postOverlay, postModal);
+  }catch(err){ alert('Erro ao salvar: '+err.message); }
 });
 
 async function handleEdit(id){
-  if (!isAdmin) { alert('Apenas administradores podem editar.'); return; }
-  const p = postsCache.find(x => x.id === id);
-  if (!p) return;
-  idEl.value = p.id;
-  titleEl.value = p.title;
-  contentEl.value = p.content;
-  categoryEl.value = p.category;
-  pinnedEl.checked = !!p.pinned;
-  submitBtn.textContent = 'Salvar edição';
-  openModal();
+  if (!currentUser) return alert('Faça login.');
+  if (!isAdmin) return alert('Sem permissão.');
+  const p = postsCache.find(x=>x.id===id); if(!p) return;
+  idEl.value = p.id; titleEl.value=p.title; contentEl.value=p.content; categoryEl.value=p.category; pinnedEl.checked=!!p.pinned;
+  submitBtn.textContent='Salvar edição'; cancelEditBtn.classList.remove('hidden');
+  openModal(postOverlay, postModal);
 }
 async function handleDelete(id){
-  if (!isAdmin) { alert('Apenas administradores podem excluir.'); return; }
+  if (!currentUser) return alert('Faça login.');
+  if (!isAdmin) return alert('Sem permissão.');
   if (!confirm('Excluir esta postagem?')) return;
-  await deleteDoc(doc(db, 'posts', id));
+  await deleteDoc(doc(db,'posts', id));
 }
 async function handlePin(id){
-  if (!isAdmin) { alert('Apenas administradores podem fixar.'); return; }
-  const p = postsCache.find(x => x.id === id);
-  if (!p) return;
-  await updateDoc(doc(db, 'posts', id), {
-    pinned: !p.pinned,
-    updatedAt: serverTimestamp()
-  });
+  if (!currentUser) return alert('Faça login.');
+  if (!isAdmin) return alert('Sem permissão.');
+  const p = postsCache.find(x=>x.id===id); if(!p) return;
+  await updateDoc(doc(db,'posts', id), { pinned: !p.pinned, updatedAt: serverTimestamp() });
 }
 
-// list/filtros
-function renderCategoriesIntoSelect(){
-  if (!catFilterEl) return;
+// ---- List ----
+function renderCats(){
   const set = new Set(['Dieta Low Carb','Vegetariana','Vegana','Esportiva','Sem categoria']);
-  postsCache.forEach(p => set.add(p.category || 'Sem categoria'));
-  catFilterEl.innerHTML = '<option value="">Todas as categorias</option>' +
-    Array.from(set).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  postsCache.forEach(p=> set.add(p.category||'Sem categoria'));
+  catFilterEl.innerHTML = '<option value="">Todas</option>' + Array.from(set).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
 }
-
 function render(){
-  if (!listEl) return;
-  if (!currentUser) {
-    listEl.innerHTML = `<p class="empty">Faça login para ver as postagens.</p>`;
-    return;
-  }
-  renderCategoriesIntoSelect();
-  const q = (searchEl?.value || '').trim().toLowerCase();
-  const cat = catFilterEl?.value;
-  const sort = sortEl?.value || 'newest';
-
-  let filtered = postsCache.filter(p => {
-    const matchQ = !q || (p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
-    const matchCat = !cat || p.category === cat;
-    return matchQ && matchCat;
+  renderCats();
+  const q = (searchEl.value||'').toLowerCase().trim();
+  const cat = catFilterEl.value;
+  const sort = sortEl.value;
+  let arr = postsCache.filter(p=>{
+    const mq = !q || p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q);
+    const mc = !cat || p.category===cat;
+    return mq && mc;
   });
-
-  filtered.sort((a,b) => {
+  arr.sort((a,b)=>{
     if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-    if (sort === 'oldest') return (a.createdAtMs ?? 0) - (b.createdAtMs ?? 0);
-    if (sort === 'title') return a.title.localeCompare(b.title);
-    return (b.createdAtMs ?? 0) - (a.createdAtMs ?? 0);
+    if (sort==='oldest') return a.createdAtMs - b.createdAtMs;
+    if (sort==='title') return a.title.localeCompare(b.title);
+    return b.createdAtMs - a.createdAtMs;
   });
-
-  if (!filtered.length) {
-    listEl.innerHTML = `<p class="empty">Nenhuma postagem encontrada.</p>`;
-    return;
-  }
-
-  listEl.innerHTML = filtered.map(p => `
+  if (!arr.length){ listEl.innerHTML = '<p class="empty">Nenhuma postagem.</p>'; return; }
+  listEl.innerHTML = arr.map(p=>`
     <article class="card" data-id="${p.id}">
-      <h3>${escapeHtml(p.title)}</h3>
+      <h3>${esc(p.title)}</h3>
       <div class="meta">
-        <span class="badge">${escapeHtml(p.category || 'Sem categoria')}</span>
-        <span>Publicado: ${fmtDate(p.createdAt)}</span>
-        ${p.updatedAt ? `<span>Atualizado: ${fmtDate(p.updatedAt)}</span>` : ''}
-        ${p.pinned ? `<span>📌 Fixado</span>` : ''}
+        <span class="badge">${esc(p.category||'Sem categoria')}</span>
+        <span>Publicado: ${fmt(p.createdAt)}</span>
+        ${p.updatedAt? `<span>Atualizado: ${fmt(p.updatedAt)}</span>`:''}
+        ${p.pinned? '<span>📌 Fixado</span>':''}
       </div>
-      <div class="content">${escapeHtml(p.content)}</div>
+      <div class="content">${esc(p.content)}</div>
       ${isAdmin ? `
       <div class="card-actions">
         <button class="btn btn-secondary" data-action="edit">Editar</button>
         <button class="btn btn-danger" data-action="delete">Excluir</button>
-        <button class="btn btn-primary" data-action="pin">${p.pinned ? 'Desafixar' : 'Fixar'}</button>
-      </div>` : ``}
+        <button class="btn btn-primary" data-action="pin">${p.pinned? 'Desafixar' : 'Fixar'}</button>
+      </div>`:''}
     </article>
   `).join('');
-
-  listEl.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    const action = btn.dataset.action;
-    const id = btn.closest('.card')?.dataset.id;
-    if (!id) return;
-    if (action === 'edit') handleEdit(id);
-    if (action === 'delete') handleDelete(id);
-    if (action === 'pin') handlePin(id);
+  listEl.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button[data-action]'); if(!btn) return;
+    const id = btn.closest('.card')?.dataset.id; const act = btn.dataset.action;
+    if (act==='edit') handleEdit(id);
+    if (act==='delete') handleDelete(id);
+    if (act==='pin') handlePin(id);
   }, { once: true });
 }
 
-// realtime
-function watchPosts(){
-  if (typeof unsubPosts === 'function') { unsubPosts(); unsubPosts = null; }
-  const qRef = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
-  unsubPosts = onSnapshot(qRef, (snap) => {
-    postsCache = snap.docs.map(d => {
+// ---- realtime ----
+(function watch(){
+  const qRef = query(collection(db,'posts'), orderBy('createdAt','desc'));
+  onSnapshot(qRef, (snap)=>{
+    postsCache = snap.docs.map(d=>{
       const v = d.data();
-      const createdAtMs = v.createdAt?.toMillis ? v.createdAt.toMillis() : Date.now();
-      return { id: d.id, ...v, createdAtMs };
+      return { id: d.id, ...v, createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0 };
     });
     render();
-  }, (err) => {
-    console.error(err);
-    listEl.innerHTML = `<p class="empty">Sem permissão para ler. Faça login.</p>`;
   });
-}
+})();
 
-// filtros
-[searchEl, catFilterEl, sortEl].forEach(el => el?.addEventListener('input', render));
-render(); // initial
+// ---- filters ----
+[searchEl, catFilterEl, sortEl].forEach(el=> el?.addEventListener('input', render));

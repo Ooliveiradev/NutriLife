@@ -4,22 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NutriLife</title>
+  <!-- Estilos existentes -->
   <link rel="stylesheet" href="css/links/link.css">
   <link rel="shortcut icon" href="images/favicon/ChatGPT_Image_17_de_ago._de_2025__12_17_23-removebg-preview-_2_.ico" type="image/x-icon">
+  <!-- Blog + Modais -->
   <link rel="stylesheet" href="css/pages/blog.css">
+  <link rel="stylesheet" href="css/pages/blog_modal.css">
 </head>
-<script src="js/blog.js"></script>
-<!-- 1) Config com suas chaves (global window.FIREBASE_CONFIG e ADMIN_UIDS) -->
-<script src="js/firebase-config.js"></script>
-
-<!-- 2) Blog com Firestore (módulo ES) -->
-<script type="module" src="js/blog_firebase.js"></script>
 <body>
   <header>
     <div class="logo">
       <img src="images/logo/ChatGPT-Image-17-de-ago.-de-2025_-11_02_59.svg" alt="Logo da marca NutriLife com maçã verde estilizada e garfo no centro, acompanhada do nome em tipografia moderna verde.">
     </div>
+
+    <!-- Ações do topo (login/logout/criar post) -->
+    <div class="header-actions">
+      <span id="whoami" class="badge-green">Visitante</span>
+      <button id="open-login" class="btn btn-secondary" style="margin-left:8px;">Entrar</button>
+      <button id="logout-btn" class="btn btn-secondary hidden" style="margin-left:8px;">Sair</button>
+      <button id="open-post-modal" class="btn btn-primary hidden" style="margin-left:8px;">Criar post</button>
+    </div>
   </header>
+
   <nav>
     <ul>
       <li><a href="#">Home</a></li>
@@ -29,6 +35,7 @@
       <li><a href="#">Diário Alimentar</a></li>
     </ul>
   </nav>
+
   <main>
     <section class="hero">
       <div class="container">
@@ -45,52 +52,28 @@
         </div>
       </div>
     </section>
+
     <section class="about">
       <div class="container">
         <h2>Sobre Nós</h2>
         <p>
           O NutriLife tem como missão proporcionar uma experiência digital que auxilie no desenvolvimento de hábitos alimentares saudáveis, por meio de ferramentas interativas e acessíveis. O projeto foi concebido com base em fontes confiáveis da área de nutrição e saúde, apoiando-se em referências científicas e recomendações de especialistas.<br/>
-
           Ao oferecer recursos como calculadora de IMC, cálculo de calorias, banco de receitas e diário alimentar, o site busca não apenas informar, mas também facilitar a aplicação prática desses conhecimentos no cotidiano dos usuários. Dessa forma, o projeto contribui para a promoção da saúde e qualidade de vida, integrando tecnologia e informação de maneira didática e responsável.
         </p>
       </div>
     </section>
+
+    <!-- ===== BLOG ===== -->
     <section id="blog" class="blog">
       <div class="container">
         <header class="blog-header">
           <h2>Blog</h2>
-          <p>Publique conteúdos e categorize (low carb, vegetariana, esportiva, etc.).</p>
+          <p>Conteúdos sobre nutrição e hábitos saudáveis. Filtre por categoria e ordene como preferir.</p>
         </header>
-    
-        <!-- Formulário de criação/edição -->
-        <form id="blog-form" class="controls" autocomplete="off">
-          <input type="hidden" id="post-id">
-    
-          <div class="row">
-            <input id="post-title" type="text" placeholder="Título da postagem *" required>
-            <input id="post-category" type="text" list="categories" placeholder="Categoria (ex.: Dieta Low Carb)">
-            <datalist id="categories">
-              <option value="Dieta Low Carb"></option>
-              <option value="Vegetariana"></option>
-              <option value="Vegana"></option>
-              <option value="Esportiva"></option>
-            </datalist>
-          </div>
-    
-          <div class="row">
-            <textarea id="post-content" placeholder="Escreva seu conteúdo *" required></textarea>
-          </div>
-    
-          <div class="actions">
-            <label><input type="checkbox" id="post-pinned"> Fixar no topo</label>
-            <button id="submit-btn" class="btn btn-primary" type="submit">Publicar</button>
-            <button id="cancel-edit" class="btn btn-secondary hidden" type="button">Cancelar edição</button>
-          </div>
-        </form>
-    
-        <!-- Filtros e busca -->
+
+        <!-- Filtros -->
         <div class="filters">
-          <input id="filter-search" type="text" placeholder="Buscar por palavra‑chave">
+          <input id="filter-search" type="text" placeholder="Buscar post...">
           <div class="row">
             <select id="filter-category" title="Categoria"></select>
             <select id="filter-sort" title="Ordenar">
@@ -100,35 +83,66 @@
             </select>
           </div>
         </div>
-    
+
         <!-- Lista de posts -->
         <div id="post-list" class="post-list"></div>
       </div>
     </section>
     
+    <!-- ===== Modais ===== -->
+    <!-- Overlay + Modal de Login -->
+    <div id="login-overlay" class="modal-overlay"></div>
+    <div id="login-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="login-title">
+      <header>
+        <h3 id="login-title">Entrar</h3>
+        <button id="login-close" class="close-btn" type="button">Fechar</button>
+      </header>
+      <div class="body">
+        <form id="login-form" class="row" autocomplete="off">
+          <input id="login-email" type="email" placeholder="E-mail" required>
+          <input id="login-pass" type="password" placeholder="Senha" required>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Fazer login</button>
+          </div>
+        </form>
+        <small>Dica: cadastre seu usuário no Firebase Authentication e adicione o UID em <code>window.NUTRILIFE_ADMIN_UIDS</code>.</small>
+      </div>
+    </div>
+
+    <!-- Overlay + Modal de Post com blur -->
+    <div id="post-overlay" class="modal-overlay"></div>
+    <div id="post-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="post-title-h3">
+      <header>
+        <h3 id="post-title-h3">Novo post</h3>
+        <button id="post-close" class="close-btn" type="button">Fechar</button>
+      </header>
+      <div class="body">
+        <form id="post-form" class="row" autocomplete="off">
+          <input type="hidden" id="post-id">
+          <div class="row two">
+            <input id="post-title" type="text" placeholder="Título *" required>
+            <input id="post-category" type="text" list="categories" placeholder="Categoria">
+            <datalist id="categories">
+              <option value="Dieta Low Carb"></option>
+              <option value="Vegetariana"></option>
+              <option value="Vegana"></option>
+              <option value="Esportiva"></option>
+            </datalist>
+          </div>
+          <textarea id="post-content" placeholder="Conteúdo *" required></textarea>
+          <div class="actions">
+            <label><input type="checkbox" id="post-pinned"> Fixar no topo</label>
+            <button id="submit-btn" class="btn btn-primary" type="submit">Publicar</button>
+            <button id="cancel-edit" class="btn btn-secondary hidden" type="button">Cancelar edição</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- ===== /Modais ===== -->
   </main>
+
+  <!-- Scripts (ordem importa) -->
+  <script src="js/firebase-config.js"></script>
+  <script type="module" src="js/blog_firebase_private.js"></script>
 </body>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBFnEcrrEK2Q-sTwsytZbjBygdac94ElF4",
-    authDomain: "nutri-life-436ae.firebaseapp.com",
-    projectId: "nutri-life-436ae",
-    storageBucket: "nutri-life-436ae.firebasestorage.app",
-    messagingSenderId: "1041931544112",
-    appId: "1:1041931544112:web:35a86a7b2a2a1d68b52ff5",
-    measurementId: "G-1KDB8JDS5V"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
 </html>

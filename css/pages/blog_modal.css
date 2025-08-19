@@ -1,37 +1,155 @@
 
-/* Modal overlay */
-#post-modal-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.5);
+/* ---------- Global Modal Layer ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35); /* slate-900/35 */
+  backdrop-filter: blur(6px) saturate(110%);
+  -webkit-backdrop-filter: blur(6px) saturate(110%);
+  z-index: 90;
   display: none;
-  z-index: 40;
+  opacity: 0;
+  transition: opacity .2s ease;
 }
-#post-modal {
-  position: fixed; inset: 0;
+.modal-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* ---------- Card/Container ---------- */
+.modal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -44%);
+  width: min(720px, 92vw);
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 30px 50px -20px rgba(2, 6, 23, 0.35);
+  z-index: 99;
   display: none;
-  z-index: 50;
-  padding: 24px;
-  overflow: auto;
 }
-#post-modal .modal-card {
-  max-width: 800px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 16px;
+.modal.active { display: grid; }
+
+.modal header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid #eef2f7;
+}
+.modal header h3 {
+  font-size: 1.2rem;
+  color: #0f172a;
+}
+.modal header .close-btn {
+  background: #eef2f7;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.modal .body {
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+.modal .row {
+  display: grid;
+  gap: 12px;
+}
+@media (min-width: 720px) {
+  .modal .row.two { grid-template-columns: 1fr 280px; }
+}
+
+.modal input[type="text"],
+.modal input[type="email"],
+.modal input[type="password"],
+.modal textarea {
+  padding: 12px 14px;
   border: 1px solid #e5e7eb;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  border-radius: 12px;
+  outline: none;
+  font-size: 1rem;
 }
-#post-modal .modal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 12px;
-}
-#post-modal .modal-header h3 { margin: 0; }
-#post-modal .modal-close {
-  border: none; background: #eef2f7; border-radius: 8px; padding: 8px 12px; cursor: pointer;
+.modal textarea { min-height: 160px; resize: vertical; }
+
+.modal .actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  flex-wrap: wrap;
 }
 
-#post-modal-backdrop.show, #post-modal.show { display: block; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter .15s ease, transform .02s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: #22c55e; color: #fff; }
+.btn-secondary { background: #eef2f7; color: #0f172a; }
+.btn-danger { background: #ef4444; color: #fff; }
+.hidden { display: none !important; }
 
-/* helpers */
-.hidden{display:none}
+/* ---------- Header Login Button ---------- */
+.header-actions {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 14px 0 14px;
+}
+#open-login {
+  font-size: .95rem;
+  padding: 8px 14px;
+}
+.badge-green {
+  padding: 4px 10px;
+  background: #eafff3;
+  color: #15803d;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: .85rem;
+}
+
+
+/* ===== Overrides: Header actions left + vertical center, inputs full width ===== */
+header {
+  position: relative;
+  min-height: 110px; /* espaço para centralizar verticalmente */
+}
+
+.header-actions {
+  position: absolute;
+  left: max(20px, calc((100vw - 1100px) / 2 + 16px)); /* longe da borda e alinhado ao container */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  max-width: none; /* cancela limite anterior */
+}
+
+@media (max-width: 640px) {
+  header { min-height: 96px; }
+  .header-actions { left: 14px; gap: 8px; }
+}
+
+/* garante campos 100% dentro do modal */
+.modal input[type="text"],
+.modal input[type="email"],
+.modal input[type="password"],
+.modal textarea {
+
+}
