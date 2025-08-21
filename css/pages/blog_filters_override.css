@@ -56,6 +56,19 @@
 }
 
 /* Responsive Layout */
+@media (max-width: 767px) {
+  .blog .filters {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .blog .filters input[type="text"],
+  .blog .filters select {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+}
+
 @media (min-width: 768px) {
   .blog .filters { 
     display: grid; 

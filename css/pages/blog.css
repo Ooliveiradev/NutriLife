@@ -2,7 +2,7 @@
 /* Blog Section */
 .blog {
   background: #ffffff;
-  padding: 60px 20px;
+  padding: 60px 0;
   border-top: 1px solid #e5e7eb;
   box-shadow: 0 4px 6px inset rgba(0, 0, 0, 0.1);
 }
@@ -196,6 +196,20 @@
 }
 
 /* Responsive */
+@media (max-width: 767px) {
+  .blog {
+    padding: 40px 0;
+  }
+  
+  .blog .container {
+    padding: 0 15px;
+  }
+  
+  .blog header.blog-header h2 {
+    font-size: 1.75rem;
+  }
+}
+
 @media (min-width: 768px) {
   .blog header.blog-header {
     align-items: center;
