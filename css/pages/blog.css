@@ -66,31 +66,51 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.85rem;
   cursor: pointer;
-  border: none;
-  transition: filter .2s ease;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  background: transparent;
 }
 
 .blog .btn-primary {
-  background: #2ecc71;
-  color: #fff;
+  background: #e1ffe3;
+  color: #50A055;
+  border-color: #50A055;
+}
+
+.blog .btn-primary:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  transform: translateY(-1px);
 }
 
 .blog .btn-secondary {
-  background: #eef2f7;
-  color: #111827;
+  background: #f8fafc;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.blog .btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
 }
 
 .blog .btn-danger {
-  background: #ef4444;
-  color: #fff;
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
 }
 
-.blog .btn:hover { 
-  filter: brightness(0.95); 
+.blog .btn-danger:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  transform: translateY(-1px);
 }
 
 /* Blog Filters */
@@ -185,8 +205,9 @@
 
 .blog .card .card-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
+  margin-top: 8px;
 }
 
 .blog .empty {
@@ -207,6 +228,15 @@
   
   .blog header.blog-header h2 {
     font-size: 1.75rem;
+  }
+  
+  .blog .btn {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .blog .card .card-actions {
+    gap: 4px;
   }
 }
 

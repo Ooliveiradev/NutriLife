@@ -13,28 +13,40 @@
 }
 
 .header-actions .btn {
-  font-size: .95rem;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
+  font-size: .9rem;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .header-actions .btn-primary {
-  background: #2ecc71;
-  color: white;
+  background: #f0f9ff;
+  color: #0369a1;
+  border-color: #bae6fd;
 }
 
 .header-actions .btn-secondary {
-  background: #eef2f7;
-  color: #0f172a;
+  background: #f8fafc;
+  color: #64748b;
+  border-color: #e2e8f0;
 }
 
 .header-actions .btn:hover {
-  filter: brightness(0.95);
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions .btn-primary:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}
+
+.header-actions .btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 .badge-green {
@@ -297,23 +309,24 @@ nav ul li a:hover {
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
-  color: white;
-  border: none;
-  padding: 15px 30px;
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  padding: 12px 24px;
   border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   width: 100%;
   margin-top: 10px;
 }
 
 .submit-btn:hover {
-  background: linear-gradient(135deg, #27ae60, #229954);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.15);
 }
 
 .submit-btn:active {
