@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de IMC - NutriLife</title>
+  <!-- Estilos existentes -->
+  <link rel="stylesheet" href="css/links/link.css">
+  <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
+  <!-- FontAwesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="images/logo/ChatGPT-Image-17-de-ago.-de-2025_-11_02_59.svg" alt="Logo da marca NutriLife com maçã verde estilizada e garfo no centro, acompanhada do nome em tipografia moderna verde.">
+    </div>
+
+    <!-- Ações do topo (login/logout/criar post) -->
+    <div class="header-actions">
+      <span id="whoami" class="badge-green">Visitante</span>
+      <button id="open-login" class="btn btn-secondary">Entrar</button>
+      <button id="logout-btn" class="btn btn-secondary hidden">Sair</button>
+      <button id="open-post-modal" class="btn btn-primary hidden">Criar post</button>
+    </div>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="IMC.html">Calculadora de IMC</a></li>
+      <li><a href="Cal.html">Calculadora de Calorias</a></li>
+      <li><a href="Receitas.html">Banco de Receitas</a></li>
+      <li><a href="diario.html">Diário Alimentar</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="imc-container">
+      <div class="imc-header">
+        <h1><i class="fas fa-calculator"></i> Calculadora de IMC</h1>
+        <p>Calcule seu Índice de Massa Corporal (IMC) de forma rápida e precisa. O IMC é uma ferramenta útil para avaliar se seu peso está adequado para sua altura.</p>
+      </div>
+
+      <div class="imc-form">
+        <form id="imcForm">
+          <div class="form-group">
+            <label for="peso">
+              <i class="fas fa-weight"></i> Peso (kg):
+            </label>
+            <input 
+              type="number" 
+              id="peso" 
+              name="peso" 
+              step="0.1" 
+              min="20" 
+              max="300" 
+              placeholder="Ex: 70.5" 
+              required
+            >
+            <div class="error-message" id="pesoError">
+              <i class="fas fa-exclamation-triangle"></i> 
+              Por favor, insira um peso válido entre 20 e 300 kg.
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="altura">
+              <i class="fas fa-ruler-vertical"></i> Altura (cm):
+            </label>
+            <input 
+              type="number" 
+              id="altura" 
+              name="altura" 
+              step="1" 
+              min="50" 
+              max="250" 
+              placeholder="Ex: 175" 
+              required
+            >
+            <div class="error-message" id="alturaError">
+              <i class="fas fa-exclamation-triangle"></i> 
+              Por favor, insira uma altura válida entre 50 e 250 centímetros.
+            </div>
+          </div>
+          
+          <button type="submit" class="btn-calculate">
+            <i class="fas fa-calculator"></i> Calcular IMC
+          </button>
+        </form>
+      </div>
+      
+      <div class="imc-result" id="imcResult">
+        <div class="imc-value" id="imcValue"></div>
+        <div class="imc-classification" id="classification"></div>
+        <div class="imc-description" id="description"></div>
+      </div>
+
+      <div class="imc-info">
+        <h3><i class="fas fa-info-circle"></i> Classificação do IMC</h3>
+        <ul>
+          <li>
+            <strong>Abaixo do peso:</strong> 
+            IMC menor que 18.5
+          </li>
+          <li>
+            <strong>Peso normal:</strong> 
+            IMC entre 18.5 e 24.9
+          </li>
+          <li>
+            <strong>Sobrepeso:</strong> 
+            IMC entre 25.0 e 29.9
+          </li>
+          <li>
+            <strong>Obesidade:</strong> 
+            IMC 30.0 ou maior
+          </li>
+        </ul>
+      </div>
+
+      <div class="imc-disclaimer">
+        <h4><i class="fas fa-exclamation-triangle"></i> Importante</h4>
+        <p>
+          O IMC é uma ferramenta de triagem que pode indicar se você está com peso baixo, normal, sobrepeso ou obesidade. 
+          No entanto, ele não mede diretamente a gordura corporal nem considera fatores como massa muscular, estrutura óssea, 
+          idade, sexo e etnia. Para uma avaliação completa de saúde, consulte sempre um profissional de saúde qualificado.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/firebase-config.js"></script>
+  <script type="module" src="js/blog_firebase_private_slug.js"></script>
+  <script src="js/imc.js"></script>
+  <script src="js/navigation.js"></script>
+</body>
+</html>
