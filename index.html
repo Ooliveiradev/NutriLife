@@ -78,7 +78,9 @@
         <div class="filters">
           <input id="filter-search" type="text" placeholder="Buscar post...">
           <div class="row">
-            <select id="filter-category" title="Categoria"></select>
+            <select id="filter-category" title="Categoria">
+              <option value="">Carregando categorias...</option>
+            </select>
             <select id="filter-sort" title="Ordenar">
               <option value="newest">Mais recentes</option>
               <option value="oldest">Mais antigas</option>
@@ -222,5 +224,6 @@
   <script type="module" src="js/blog_firebase_private_slug.js"></script>
   <script src="js/contact.js"></script>
   <script src="js/navigation.js"></script>
+  <script src="js/blog-debug.js"></script>
 </body>
 </html>

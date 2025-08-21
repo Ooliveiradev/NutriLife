@@ -30,6 +30,14 @@ const searchEl = $('#filter-search');
 const catFilterEl = $('#filter-category');
 const sortEl = $('#filter-sort');
 
+// Debug: verificar se os elementos foram encontrados
+console.log('Elementos encontrados:', {
+  listEl: !!listEl,
+  searchEl: !!searchEl,
+  catFilterEl: !!catFilterEl,
+  sortEl: !!sortEl
+});
+
 
 
 // header login button
@@ -294,28 +302,67 @@ window.addEventListener('popstate', (e)=>{
 
 // ---- List ----
 function renderCats(){
-  const set = new Set(['Dieta Low Carb','Vegetariana','Vegana','Esportiva','Sem categoria','Hábitos Saudáveis']);
-  postsCache.forEach(p=> set.add(p.category||'Sem categoria'));
-  const options = '<option value="">Todas</option>' + Array.from(set).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  if (!catFilterEl) {
+    console.warn('Elemento catFilterEl não encontrado');
+    return;
+  }
+  
+  console.log('Renderizando categorias...');
+  
+  // Categorias padrão
+  const set = new Set([
+    'Dieta Low Carb',
+    'Vegetariana', 
+    'Vegana',
+    'Esportiva',
+    'Sem categoria',
+    'Hábitos Saudáveis'
+  ]);
+  
+  // Adicionar categorias dos posts existentes
+  postsCache.forEach(p => {
+    const category = p.category || 'Sem categoria';
+    set.add(category);
+    console.log('Categoria encontrada:', category);
+  });
+  
+  const categories = Array.from(set).sort();
+  console.log('Categorias disponíveis:', categories);
+  
+  const options = '<option value="">Todas</option>' + 
+    categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  
   catFilterEl.innerHTML = options;
+  console.log('Categorias renderizadas');
 }
 function render(){
+  if (!listEl) return;
+  
   renderCats();
-  const q = (searchEl.value||'').toLowerCase().trim();
-  const cat = catFilterEl.value;
-  const sort = sortEl.value;
+  
+  const q = (searchEl?.value || '').toLowerCase().trim();
+  const cat = (catFilterEl?.value || '').trim();
+  const sort = (sortEl?.value || 'newest');
+  
   let arr = postsCache.filter(p=>{
-    const mq = !q || p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q);
-    const mc = !cat || p.category===cat;
+    const mq = !q || 
+      p.title.toLowerCase().includes(q) || 
+      p.content.toLowerCase().includes(q);
+    const mc = !cat || p.category === cat;
     return mq && mc;
   });
+  
   arr.sort((a,b)=>{
     if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
     if (sort==='oldest') return a.createdAtMs - b.createdAtMs;
     if (sort==='title') return a.title.localeCompare(b.title);
     return b.createdAtMs - a.createdAtMs;
   });
-  if (!arr.length){ listEl.innerHTML = '<p class="empty">Nenhuma postagem.</p>'; return; }
+  
+  if (!arr.length){ 
+    listEl.innerHTML = '<p class="empty">Nenhuma postagem encontrada.</p>'; 
+    return; 
+  }
 
   listEl.innerHTML = arr.map(p=>{
     const excerpt = makeExcerpt(p.content || '');
@@ -363,13 +410,18 @@ function render(){
 }
 
 // ---- realtime + deep-link on load ----
-(function watch(){
+function initBlog() {
+  console.log('Inicializando blog...');
+  
   const qRef = query(collection(db,'posts'), orderBy('createdAt','desc'));
   onSnapshot(qRef, (snap)=>{
+    console.log('Posts carregados:', snap.docs.length);
+    
     postsCache = snap.docs.map(d=>{
       const v = d.data();
       return { id: d.id, ...v, createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0 };
     });
+    
     render();
 
     // Deep-link: se tiver ?p=slug ou ?id=...
@@ -382,11 +434,26 @@ function render(){
       const p = postsCache.find(x=> x.id === id);
       if (p) openView(p, false);
     }
+  }, (error) => {
+    console.error('Erro ao carregar posts:', error);
   });
-})();
+}
+
+// Inicializar quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', initBlog);
 
 // ---- filters ----
-[searchEl, catFilterEl, sortEl].forEach(el=> el?.addEventListener('input', render));
+function initFilters() {
+  [searchEl, catFilterEl, sortEl].forEach(el => {
+    if (el) {
+      el.addEventListener('input', render);
+      el.addEventListener('change', render);
+    }
+  });
+}
+
+// Inicializar filtros quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', initFilters);
 
 
 // ==== Fechar modais com ESC ====
