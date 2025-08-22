@@ -20,7 +20,6 @@ const auth = getAuth(app);
 
 // ---- DOM utils ----
 const $ = (sel, el=document) => el.querySelector(sel);
-const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
 const esc = (s)=>String(s).replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt = (ts)=> ts?.toDate ? ts.toDate().toLocaleString() : "-";
 
@@ -29,9 +28,6 @@ const listEl = $('#post-list');
 const searchEl = $('#filter-search');
 const catFilterEl = $('#filter-category');
 const sortEl = $('#filter-sort');
-
-
-
 // header login button
 const openLoginBtn = $('#open-login');
 const logoutBtn = $('#logout-btn');
@@ -294,10 +290,12 @@ window.addEventListener('popstate', (e)=>{
 
 // ---- List ----
 function renderCats(){
+  const selected = catFilterEl.value;
   const set = new Set(['Dieta Low Carb','Vegetariana','Vegana','Esportiva','Sem categoria','Hábitos Saudáveis']);
   postsCache.forEach(p=> set.add(p.category||'Sem categoria'));
-  const options = '<option value="">Todas</option>' + Array.from(set).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
-  catFilterEl.innerHTML = options;
+  catFilterEl.innerHTML = '<option value="">Todas</option>' +
+    Array.from(set).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  catFilterEl.value = selected;
 }
 function render(){
   renderCats();
@@ -342,51 +340,55 @@ function render(){
       </div>
     </article>`;
   }).join('');
+}
 
-  listEl.addEventListener('click', (e)=>{
-    const a = e.target.closest('a[data-action="share"]');
-    if (a) { 
-      e.preventDefault();
-      const slug = a.dataset.slug;
-      const p = postsCache.find(x=> (x.slug || slugify(x.title)) === slug);
-      if (p) openView(p);
-      return;
-    }
-    const btn = e.target.closest('button[data-action]'); if(!btn) return;
-    const id = btn.closest('.card')?.dataset.id; const act = btn.dataset.action;
-    const p = postsCache.find(x=>x.id===id);
-    if (act==='view') openView(p);
-    if (act==='edit') handleEdit(id);
-    if (act==='delete') handleDelete(id);
-    if (act==='pin') handlePin(id);
-  });
+function handleListClick(e){
+  const a = e.target.closest('a[data-action="share"]');
+  if (a) {
+    e.preventDefault();
+    const slug = a.dataset.slug;
+    const p = postsCache.find(x=> (x.slug || slugify(x.title)) === slug);
+    if (p) openView(p);
+    return;
+  }
+  const btn = e.target.closest('button[data-action]');
+  if(!btn) return;
+  const id = btn.closest('.card')?.dataset.id;
+  const act = btn.dataset.action;
+  const p = postsCache.find(x=>x.id===id);
+  if (act==='view') openView(p);
+  if (act==='edit') handleEdit(id);
+  if (act==='delete') handleDelete(id);
+  if (act==='pin') handlePin(id);
 }
 
 // ---- realtime + deep-link on load ----
-(function watch(){
-  const qRef = query(collection(db,'posts'), orderBy('createdAt','desc'));
-  onSnapshot(qRef, (snap)=>{
-    postsCache = snap.docs.map(d=>{
-      const v = d.data();
-      return { id: d.id, ...v, createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0 };
+if (listEl) {
+  listEl.addEventListener('click', handleListClick);
+  (function watch(){
+    const qRef = query(collection(db,'posts'), orderBy('createdAt','desc'));
+    onSnapshot(qRef, (snap)=>{
+      postsCache = snap.docs.map(d=>{
+        const v = d.data();
+        return { id: d.id, ...v, createdAtMs: v.createdAt?.toMillis ? v.createdAt.toMillis() : 0 };
+      });
+      render();
+
+      // Deep-link: se tiver ?p=slug ou ?id=...
+      const params = new URLSearchParams(location.search);
+      const slug = params.get('p'); const id = params.get('id');
+      if (slug) {
+        const p = postsCache.find(x=> (x.slug || slugify(x.title)) === slug);
+        if (p) openView(p, false);
+      } else if (id) {
+        const p = postsCache.find(x=> x.id === id);
+        if (p) openView(p, false);
+      }
     });
-    render();
+  })();
 
-    // Deep-link: se tiver ?p=slug ou ?id=...
-    const params = new URLSearchParams(location.search);
-    const slug = params.get('p'); const id = params.get('id');
-    if (slug) {
-      const p = postsCache.find(x=> (x.slug || slugify(x.title)) === slug);
-      if (p) openView(p, false);
-    } else if (id) {
-      const p = postsCache.find(x=> x.id === id);
-      if (p) openView(p, false);
-    }
-  });
-})();
-
-// ---- filters ----
-[searchEl, catFilterEl, sortEl].forEach(el=> el?.addEventListener('input', render));
+  [searchEl, catFilterEl, sortEl].forEach(el=> el?.addEventListener('input', render));
+}
 
 
 // ==== Fechar modais com ESC ====
