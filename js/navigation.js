@@ -1,4 +1,4 @@
-// ===== NAVEGAÇÃO AUTOMÁTICA =====
+// ===== NAVEGAÇÃO AUTOMÁTICA - Otimizado =====
 
 document.addEventListener('DOMContentLoaded', function() {
     // Obter o caminho atual da página
@@ -8,20 +8,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Encontrar todos os links de navegação
     const navLinks = document.querySelectorAll('nav ul li a');
     
-    // Remover classe active de todos os links
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    // Adicionar classe active ao link correspondente à página atual
+    // Processar cada link uma única vez
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
         
         // Verificar se o link corresponde à página atual
-        if (href === currentPage || 
+        const isCurrentPage = href === currentPage || 
             (currentPage === 'index.html' && href === 'index.html') ||
-            (currentPage === '' && href === 'index.html')) {
+            (currentPage === '' && href === 'index.html');
+        
+        // Aplicar classe active se necessário
+        if (isCurrentPage) {
             link.classList.add('active');
+            link.setAttribute('aria-current', 'page');
+        } else {
+            link.classList.remove('active');
+            link.removeAttribute('aria-current');
         }
     });
 }); 
