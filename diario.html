@@ -7,11 +7,21 @@
   <link rel="stylesheet" href="css/links/link.css">
   <link rel="stylesheet" href="css/pages/imc.css">
   <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
+  <!-- FontAwesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <header>
     <div class="logo">
-      <img src="images/logo/ChatGPT-Image-17-de-ago.-de-2025_-11_02_59.svg" alt="Logo NutriLife">
+      <img src="images/logo/ChatGPT-Image-17-de-ago.-de-2025_-11_02_59.svg" alt="Logo da marca NutriLife com maçã verde estilizada e garfo no centro, acompanhada do nome em tipografia moderna verde.">
+    </div>
+
+    <!-- Ações do topo (login/logout/criar post) -->
+    <div class="header-actions">
+      <span id="whoami" class="badge-green">Visitante</span>
+      <button id="open-login" class="btn btn-secondary">Entrar</button>
+      <button id="logout-btn" class="btn btn-secondary hidden">Sair</button>
+      <button id="open-post-modal" class="btn btn-primary hidden">Criar post</button>
     </div>
   </header>
 
@@ -32,5 +42,30 @@
       <a href="index.html" class="btn btn-primary">Voltar ao Início</a>
     </div>
   </main>
+
+  <!-- ===== Modais ===== -->
+  <!-- Overlay + Modal de Login -->
+  <div id="login-overlay" class="modal-overlay"></div>
+  <div id="login-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="login-title">
+    <header>
+      <h3 id="login-title">Entrar</h3>
+      <button id="login-close" class="close-btn" type="button" aria-label="Fechar modal">Fechar</button>
+    </header>
+    <div class="body">
+      <form id="login-form" class="row" autocomplete="off">
+        <input id="login-email" type="email" placeholder="E-mail" required aria-label="E-mail">
+        <input id="login-pass" type="password" placeholder="Senha" required aria-label="Senha">
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Fazer login</button>
+        </div>
+      </form>
+      <small>Dica: cadastre seu usuário no Firebase Authentication e adicione o UID em <code>window.NUTRILIFE_ADMIN_UIDS</code>.</small>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/firebase-config.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script src="js/navigation.js"></script>
 </body>
 </html>
