@@ -1,13 +1,103 @@
+/* Centralização geral */
+main {
+  flex: unset;              /* remove centralização forçada vertical */
+  display: block;           /* deixa os cards fluírem um abaixo do outro */
+  min-height: auto;
+  padding: 20px 10px;       /* espaçamento interno */
+}
+
+/* ===== Seções de introdução, dicas e aviso ===== */
+.cal-intro-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  max-width: 560px;
+  margin: 36px auto 24px auto;
+  padding: 32px 28px 24px 28px;
+  text-align: center;
+}
+.cal-intro-icon {
+  font-size: 2.5em;
+  color: #50A055;
+  margin-bottom: 8px;
+}
+.cal-intro-title {
+  font-size: 2.1em;
+  color: #26324B;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.cal-intro-desc {
+  color: #5c6a7a;
+  font-size: 1.13em;
+  margin-bottom: 0;
+}
+
+.cal-tips-card {
+  background: #f7fafd;
+  border: 1.5px solid #dbe6ef;
+  border-radius: 12px;
+  max-width: 560px;
+  margin: 0 auto 28px auto;
+  padding: 18px 22px 12px 22px;
+}
+.cal-tips-title {
+  font-size: 1.1em;
+  color: #26324B;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.cal-tips-title i {
+  color: #f7b500;
+  font-size: 1.2em;
+}
+.cal-tips-list {
+  color: #3d4a5c;
+  font-size: 1em;
+  margin: 0 0 0 1.2em;
+  padding: 0;
+  list-style: disc inside;
+}
+.cal-tips-list li {
+  margin-bottom: 4px;
+}
+
+.cal-warning-card {
+  background: linear-gradient(90deg, #fffbe6 60%, #fff7d1 100%);
+  border: 1.5px solid #ffe7a3;
+  border-radius: 14px;
+  max-width: 560px;
+  margin: 32px auto 0 auto;
+  padding: 22px 28px 18px 28px;
+}
+.cal-warning-title {
+  font-size: 1.1em;
+  color: #b48a00;
+  font-weight: 600;
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.cal-warning-title i {
+  color: #f7b500;
+  font-size: 1.2em;
+}
+.cal-warning-desc {
+  color: #8a6d1b;
+  font-size: 1.05em;
+  line-height: 1.6;
+}
 /* ===== Calculadora de Calorias ===== */
 body {
   min-height: 100vh;
-  display: flex;
   flex-direction: column;
 }
 
 main {
   flex: 1 1 auto;
-  display: flex;
   align-items: center;
   justify-content: center;
   min-height: 80vh;
@@ -15,7 +105,7 @@ main {
 
 .cal-container {
   background: #fff;
-  max-width: 520px;
+  max-width: 560px;
   width: 100%;
   margin: 0 auto;
   border-radius: 18px;
@@ -43,12 +133,16 @@ main {
 }
 .cal-row input[type="number"],
 .cal-row select {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 100%;
   padding: 7px 10px;
   border: 1px solid #cfd8dc;
   border-radius: 7px;
   font-size: 1em;
   background: #f8f9fa;
+  box-sizing: border-box;
+  white-space: normal;
 }
 .cal-row input[type="radio"] {
   margin-right: 4px;

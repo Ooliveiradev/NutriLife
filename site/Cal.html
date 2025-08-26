@@ -39,8 +39,18 @@
   </nav>
 
   <main>
+
+    <!-- EXPLICAÇÃO -->
+    <section class="cal-intro-card">
+      <div class="cal-intro-icon"><i class="fas fa-fire"></i></div>
+      <h1 class="cal-intro-title">Calculadora de Calorias</h1>
+      <p class="cal-intro-desc">
+        Descubra de forma rápida e precisa quantas calorias seu corpo precisa diariamente para manter, perder ou ganhar peso. Esta calculadora utiliza fórmulas reconhecidas e considera seu nível de atividade física e objetivo.
+      </p>
+    </section>
+
+    <!-- CALCULADORA + DICAS -->
     <section class="cal-container">
-      <h1 class="cal-title"><i class="fas fa-fire"></i> Calculadora de Calorias</h1>
       <form id="cal-form" autocomplete="off">
         <div class="cal-row">
           <label>Sexo:</label>
@@ -81,7 +91,26 @@
         <div class="cal-row cal-btn-row">
           <button type="submit" class="btn-calculate"><i class="fas fa-calculator"></i> Calcular</button>
         </div>
+        <!-- DICAS DENTRO DA CAIXA -->
+        <div class="cal-tips-card" style="margin:32px 0 0 0;">
+          <div class="cal-tips-title"><i class="fas fa-lightbulb"></i> <strong>Dicas para um cálculo preciso:</strong></div>
+          <ul class="cal-tips-list">
+            <li>Use uma balança confiável para medir seu peso</li>
+            <li>Meça sua altura em centímetros, sem sapatos</li>
+            <li>Preencha seu nível de atividade com sinceridade</li>
+            <li>Considere seu objetivo de forma realista</li>
+            <li>Esta calculadora é uma ferramenta de triagem, não um diagnóstico médico</li>
+          </ul>
+        </div>
       </form>
+    </section>
+
+    <!-- AVISO IMPORTANTE -->
+    <section class="cal-warning-card">
+      <div class="cal-warning-title"><i class="fas fa-exclamation-triangle"></i> <strong>Importante</strong></div>
+      <div class="cal-warning-desc">
+        Esta calculadora é uma ferramenta de triagem que pode indicar se sua ingestão calórica está adequada para seu objetivo. Ela não substitui a avaliação de um nutricionista ou profissional de saúde. Fatores como metabolismo, composição corporal, idade, sexo e rotina podem influenciar suas necessidades reais. Para um plano alimentar personalizado, consulte sempre um profissional qualificado.
+      </div>
     </section>
 
     <!-- Modal de resultado -->

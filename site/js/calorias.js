@@ -36,21 +36,23 @@ document.addEventListener('DOMContentLoaded', function () {
   function showModal(resultado) {
     modalBody.innerHTML = `
       <div style="text-align:center;margin-bottom:18px">
-        <div style="font-size:2.2em;font-weight:700;color:#50A055">${resultado.objetivoKcal} kcal</div>
-        <div style="font-size:1.1em;color:#888;margin-bottom:8px">Calorias‑alvo (${resultado.objetivoLabel})</div>
+        <div style="font-size:2.5em;font-weight:700;color:#50A055">${resultado.objetivoKcal} kcal</div>
+        <div style="font-size:1.2em;color:#888;margin-bottom:8px">Calorias‑alvo para <strong>${resultado.objetivoLabel}</strong></div>
       </div>
-      <div style="display:flex;justify-content:center;gap:18px;margin-bottom:18px;flex-wrap:wrap">
-        <div>
+      <div style="display:flex;justify-content:space-around;gap:18px;margin-bottom:18px;flex-wrap:wrap">
+        <div style="text-align:center">
           <div style="font-size:1.1em;font-weight:600;color:#555">BMR</div>
-          <div style="font-size:1.2em">${resultado.bmr} kcal</div>
+          <div style="font-size:1.2em;color:#333">${resultado.bmr} kcal</div>
+          <div style="font-size:0.9em;color:#888">Taxa Metabólica Basal</div>
         </div>
-        <div>
+        <div style="text-align:center">
           <div style="font-size:1.1em;font-weight:600;color:#555">TDEE</div>
-          <div style="font-size:1.2em">${resultado.tdee} kcal</div>
+          <div style="font-size:1.2em;color:#333">${resultado.tdee} kcal</div>
+          <div style="font-size:0.9em;color:#888">Gasto Energético Diário</div>
         </div>
       </div>
       <div style="text-align:center;margin-top:18px">
-        <button id="cal-modal-ok" class="btn-calculate" style="width:80%;max-width:260px">OK</button>
+        <button id="cal-modal-ok" class="btn-calculate" style="width:80%;max-width:260px;background-color:#50A055;color:#fff;border:none;padding:10px 20px;border-radius:5px;font-size:1.1em;cursor:pointer">Entendido</button>
       </div>
     `;
     overlay.classList.add('show');
