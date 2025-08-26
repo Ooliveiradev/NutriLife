@@ -146,6 +146,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   margin-top: 10px;
+  max-height: 60px;
 }
 
 .genero-option {
@@ -653,3 +654,77 @@
 .cal-container::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
 } 
+
+/* ==== Correção: Gênero com o mesmo tamanho dos demais campos ==== */
+
+/* Altura padrão dos campos (ajuste se seus inputs forem mais altos) */
+:root { --field-height: 56px; }
+
+.form-group input,
+.form-group select {
+  min-height: var(--field-height); /* garante altura coerente para inputs/selects */
+}
+
+/* O grupo de gênero ocupa duas colunas iguais, com o mesmo gap dos outros campos */
+.genero-group{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+  margin-top: 10px;           /* igual ao espaçamento dos outros */
+}
+
+/* Cada opção de gênero vira um “input-card” do mesmo tamanho dos campos */
+.genero-option{
+  width: 100%;
+  min-height: var(--field-height); /* iguala a altura dos inputs */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;                     /* padding horizontal como os inputs */
+  border: 2px solid #e1e5e9;
+  border-radius: var(--border-radius-medium);
+  background: var(--color-gray-light);
+  transition: all var(--transition-normal);
+}
+
+/* Hover/active iguais ao foco dos inputs */
+.genero-option:hover{
+  border-color: var(--color-primary);
+  background: var(--color-white);
+  box-shadow: 0 0 0 3px rgba(80,160,85,0.10);
+  transform: translateY(-2px);
+}
+
+/* Realce quando marcado (funciona nos navegadores modernos) */
+.genero-option:has(input[type="radio"]:checked){
+  border-color: var(--color-primary);
+  background: rgba(80,160,85,0.06);
+  box-shadow: 0 0 0 3px rgba(80,160,85,0.10);
+}
+
+/* Mantém o rádio e o texto alinhadinhos */
+.genero-option input[type="radio"]{
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: #50A055;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+.genero-option label{
+  margin: 0;
+  flex: 1;
+  cursor: pointer;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+.genero-option input[type="radio"]:checked + label{
+  color: #50A055;
+  font-weight: 600;
+}
+
+/* Responsivo: uma opção por linha em telas menores */
+@media (max-width: 768px){
+  .genero-group{ grid-template-columns: 1fr; }
+}
