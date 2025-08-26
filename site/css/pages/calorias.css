@@ -2,8 +2,7 @@
 main {
   flex: unset;              /* remove centralização forçada vertical */
   display: block;           /* deixa os cards fluírem um abaixo do outro */
-  min-height: auto;
-  padding: 20px 10px;       /* espaçamento interno */
+  min-height: auto;     /* espaçamento interno */
 }
 
 /* ===== Seções de introdução, dicas e aviso ===== */
