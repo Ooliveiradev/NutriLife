@@ -39,7 +39,62 @@
   </nav>
 
   <main>
-    
+    <section class="cal-container">
+      <h1 class="cal-title"><i class="fas fa-fire"></i> Calculadora de Calorias</h1>
+      <form id="cal-form" autocomplete="off">
+        <div class="cal-row">
+          <label>Sexo:</label>
+          <label><input type="radio" name="sexo" value="masculino" required> Masculino</label>
+          <label><input type="radio" name="sexo" value="feminino"> Feminino</label>
+        </div>
+        <div class="cal-row">
+          <label for="idade">Idade:</label>
+          <input type="number" id="idade" name="idade" min="10" max="120" required placeholder="Anos">
+        </div>
+        <div class="cal-row">
+          <label for="peso">Peso:</label>
+          <input type="number" id="peso" name="peso" min="30" max="300" step="0.1" required placeholder="kg">
+        </div>
+        <div class="cal-row">
+          <label for="altura">Altura:</label>
+          <input type="number" id="altura" name="altura" min="120" max="250" required placeholder="cm">
+        </div>
+        <div class="cal-row">
+          <label for="atividade">Nível de Atividade:</label>
+          <select id="atividade" name="atividade" required>
+            <option value="">Selecione</option>
+            <option value="1.2">Sedentário (pouco ou nenhum exercício)</option>
+            <option value="1.375">Levemente ativo (exercício leve 1-3 dias/semana)</option>
+            <option value="1.55">Moderadamente ativo (exercício moderado 3-5 dias/semana)</option>
+            <option value="1.725">Muito ativo (exercício intenso 6-7 dias/semana)</option>
+            <option value="1.9">Extremamente ativo (trabalho físico pesado + treino)</option>
+          </select>
+        </div>
+        <div class="cal-row">
+          <label for="objetivo">Objetivo:</label>
+          <select id="objetivo" name="objetivo" required>
+            <option value="manter">Manter peso</option>
+            <option value="emagrecer">Emagrecer</option>
+            <option value="ganhar">Ganhar massa</option>
+          </select>
+        </div>
+        <div class="cal-row cal-btn-row">
+          <button type="submit" class="btn-calculate"><i class="fas fa-calculator"></i> Calcular</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Modal de resultado -->
+    <div id="cal-modal-overlay" class="modal-overlay"></div>
+    <div id="cal-modal" class="modal cal-modal" aria-hidden="true" role="dialog" aria-labelledby="cal-modal-title">
+      <header>
+        <h3 id="cal-modal-title"><i class="fas fa-fire"></i> Resultado das Calorias</h3>
+        <button id="cal-modal-close" class="close-btn" type="button" aria-label="Fechar modal">Fechar</button>
+      </header>
+      <div class="body" id="cal-modal-body">
+        <!-- JS preenche aqui -->
+      </div>
+    </div>
   </main>
 
   <!-- ===== Modais ===== -->

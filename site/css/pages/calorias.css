@@ -1,0 +1,146 @@
+/* ===== Calculadora de Calorias ===== */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.cal-container {
+  background: #fff;
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  padding: 38px 38px 28px 38px;
+}
+.cal-title {
+  text-align: center;
+  color: #50A055;
+  font-size: 1.6em;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+.cal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.cal-row label {
+  min-width: 110px;
+  font-weight: 500;
+  color: #444;
+}
+.cal-row input[type="number"],
+.cal-row select {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid #cfd8dc;
+  border-radius: 7px;
+  font-size: 1em;
+  background: #f8f9fa;
+}
+.cal-row input[type="radio"] {
+  margin-right: 4px;
+}
+.cal-btn-row {
+  justify-content: center;
+}
+.btn-calculate {
+  background: #50A055;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 28px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-calculate:hover {
+  background: #38803c;
+}
+
+/* ===== Modal de resultado ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  transition: opacity 0.3s;
+}
+.modal-overlay.show {
+  display: block;
+  opacity: 1;
+}
+.cal-modal.modal {
+  display: none;
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  z-index: 1001;
+  min-width: 340px;
+  max-width: 95vw;
+  max-height: 90vh;
+  padding: 0;
+  animation: slideIn 0.4s;
+}
+.cal-modal.show {
+  display: block;
+}
+.cal-modal header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px 10px 28px;
+  border-bottom: 1px solid #eee;
+  background: #f8f9fa;
+  border-radius: 18px 18px 0 0;
+}
+.cal-modal header h3 {
+  font-size: 1.3em;
+  color: #50A055;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cal-modal .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  color: #888;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.cal-modal .close-btn:hover {
+  background: #eee;
+}
+.cal-modal .body {
+  padding: 28px 28px 18px 28px;
+  overflow-y: auto;
+}
+@media (max-width: 480px) {
+  .cal-modal .body, .cal-modal header { padding: 14px 10px; }
+  .cal-modal { min-width: 0; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translate(-50%,-40%);}
+  to   { opacity: 1; transform: translate(-50%,-50%);}
+}
