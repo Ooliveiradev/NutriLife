@@ -8,6 +8,7 @@
   <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
   <!-- FontAwesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="css/pages/receitas_banco.css">
 </head>
 <body>
   <header>
@@ -33,38 +34,29 @@
       <li><a href="diario.html">Diário Alimentar</a></li>
     </ul>
   </nav>
-
+  
   <main>
-    <div class="container">
-      <h1>Banco de Receitas</h1>
-      <p>Funcionalidade em desenvolvimento. Em breve você encontrará receitas saudáveis e nutritivas.</p>
-      <a href="index.html" class="btn btn-primary">Voltar ao Início</a>
-    </div>
+
   </main>
 
-  <!-- ===== Modais ===== -->
-  <!-- Overlay + Modal de Login -->
-  <div id="login-overlay" class="modal-overlay"></div>
-  <div id="login-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="login-title">
-    <header>
-      <h3 id="login-title">Entrar</h3>
-      <button id="login-close" class="close-btn" type="button" aria-label="Fechar modal">Fechar</button>
-    </header>
-    <div class="body">
-      <form id="login-form" class="row" autocomplete="off">
-        <input id="login-email" type="email" placeholder="E-mail" required aria-label="E-mail">
-        <input id="login-pass" type="password" placeholder="Senha" required aria-label="Senha">
-        <div class="actions">
-          <button class="btn btn-primary" type="submit">Fazer login</button>
-        </div>
-      </form>
-      <small>Dica: cadastre seu usuário no Firebase Authentication e adicione o UID em <code>window.NUTRILIFE_ADMIN_UIDS</code>.</small>
-    </div>
-  </div>
+<!-- Modal de Detalhes da Receita -->
+<div id="modal-view-receita" class="modal" aria-hidden="true">
+  <header>
+    <h3 id="view-receita-titulo"></h3>
+    <button class="close-btn" type="button" aria-label="Fechar modal" onclick="closeViewReceitaModal()">Fechar</button>
+  </header>
+  <img id="view-receita-imagem" src="" alt="Imagem da receita" style="max-width:100%;border-radius:12px;margin-bottom:16px;display:none;">
+  <div class="tags" id="view-receita-tags"></div>
+  <h4>Ingredientes</h4>
+  <ul id="view-receita-ingredientes"></ul>
+  <h4>Modo de preparo</h4>
+  <p id="view-receita-modo"></p>
+</div>
 
   <!-- Scripts -->
   <script src="js/firebase-config.js"></script>
   <script type="module" src="js/auth.js"></script>
   <script src="js/navigation.js"></script>
+  <script src="js/receitas_banco.js"></script>
 </body>
 </html>
