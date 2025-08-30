@@ -1,7 +1,7 @@
 // ===== FORMULÁRIO DE CONTATO - Otimizado =====
 
 document.addEventListener('DOMContentLoaded', function() {
-  const contactForm = document.getElementById('contact-form');
+  const contactForm = document.querySelector('form.contact-form');
   
   if (!contactForm) return;
   
@@ -69,15 +69,17 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Event listener do formulário
   contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+    // e.preventDefault(); // apenas se inválido
     
     const formData = new FormData(contactForm);
     
     // Validar formulário
     if (!validateForm(formData)) {
+      e.preventDefault();
       return;
     }
     
+    return;
     const submitBtn = contactForm.querySelector('.submit-btn');
     const originalText = submitBtn.innerHTML;
     

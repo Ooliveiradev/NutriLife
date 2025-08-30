@@ -60,6 +60,10 @@ function updateHeaderState() {
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   updateHeaderState();
+  // Garante que o modal de login não fique aberto quando já logado
+  if (user) {
+    try { closeModal(loginOverlay, loginModal); } catch {}
+  }
 });
 
 // ---- Event Listeners ----

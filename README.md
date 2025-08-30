@@ -75,9 +75,9 @@ O NutriLife é uma plataforma web completa desenvolvida para auxiliar usuários 
 ```
 NutriLife/
 ├── index.html              # Página principal
-├── IMC.html               # Calculadora de IMC
-├── Cal.html               # Calculadora de Calorias
-├── Receitas.html          # Banco de Receitas
+├── imc.html               # Calculadora de IMC
+├── cal.html               # Calculadora de Calorias
+├── receitas.html          # Banco de Receitas
 ├── diario.html            # Diário Alimentar
 ├── css/
 │   ├── links/             # Estilos de links

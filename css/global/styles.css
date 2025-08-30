@@ -5,6 +5,7 @@
   --color-background: #ffffff;
   --color-primary: #50A055;
   --color-secondary: #2E4057;
+  --color-terciary: #87bbff;
   
   /* Variações das cores principais */
   --color-primary-light: #6bb06f;
@@ -42,6 +43,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+
 }
 
 body {
@@ -53,6 +56,26 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.6;
 }
+
+/* Utilidades globais */
+.hidden { display: none !important; }
+
+/* Modais globais (usados por login/blog em todas as páginas) */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+}
+.modal-overlay.active { display: block; }
+
+.modal {
+  display: none;
+}
+.modal.active,
+.modal[aria-hidden="false"] { display: block; }
+.modal[aria-hidden="true"] { display: none; }
 
 .container {
   width: 100%;
@@ -120,6 +143,7 @@ nav ul li a.active::after {
 .btn-secondary:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-medium);
+  color: var(--color-terciary);
 }
 
 /* Cards globais */
@@ -187,6 +211,121 @@ nav ul li a.active::after {
   .container {
     padding: 0 30px;
   }
+}
+
+/* header style */
+/* Header actions */
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding-right: 30px;
+}
+
+.header-actions .btn {
+  font-size: .9rem;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.header-actions .btn-primary {
+  background: #f0f9ff;
+  color: #0369a1;
+  border-color: #bae6fd;
+}
+
+.header-actions .btn-secondary {
+  background: #f8fafc;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.header-actions .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions .btn-primary:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}
+
+.header-actions .btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.badge-green {
+  padding: 4px 10px;
+  background: #eafff3;
+  color: #15803d;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: .85rem;
+}
+
+/* Header */
+header {
+  border-bottom: 2.5px solid #50A055;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+header .logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+header .logo img {
+  width: 100px;
+  display: block;
+}
+
+/* Navigation */
+nav {
+  padding: 5px 0;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #2E4057;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+nav ul li a:hover {
+  color: #27ae60;
+}
+
+/* Brand */
+.brand {
+  font-family: 'Tinos', serif;
+  font-size: 3rem;
+  font-weight: 400;
+  font-style: italic;
 }
 
 /* Utilitários */

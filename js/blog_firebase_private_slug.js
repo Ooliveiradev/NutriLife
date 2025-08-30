@@ -19,9 +19,9 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 // ---- DOM utils ----
-const $ = (sel, el=document) => el.querySelector(sel);
-const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
-const esc = (s) => String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const $ = (sel, el = document) => el.querySelector(sel);
+const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
+const esc = (s) => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
 const fmt = (ts) => ts?.toDate ? ts.toDate().toLocaleString() : "-";
 
 // ---- Elements ----
@@ -71,29 +71,29 @@ let postsCache = [];
 let openedSlug = null; // controle de deep-link atual
 
 // ---- Helpers ----
-function toggle(el, state) { 
-  if (!el) return; 
-  el.classList[state ? 'add' : 'remove']('active'); 
+function toggle(el, state) {
+  if (!el) return;
+  el.classList[state ? 'add' : 'remove']('active');
 }
 
-function openModal(overlay, modal) { 
-  toggle(overlay, true); 
-  toggle(modal, true); 
+function openModal(overlay, modal) {
+  toggle(overlay, true);
+  toggle(modal, true);
 }
 
-function closeModal(overlay, modal) { 
-  toggle(modal, false); 
-  setTimeout(() => toggle(overlay, false), 50); 
+function closeModal(overlay, modal) {
+  toggle(modal, false);
+  setTimeout(() => toggle(overlay, false), 50);
 }
 
-function resetForm() { 
-  idEl.value = ''; 
-  titleEl.value = ''; 
-  contentEl.value = ''; 
-  categoryEl.value = ''; 
-  pinnedEl.checked = false; 
-  submitBtn.textContent = 'Publicar'; 
-  cancelEditBtn.classList.add('hidden'); 
+function resetForm() {
+  idEl.value = '';
+  titleEl.value = '';
+  contentEl.value = '';
+  categoryEl.value = '';
+  pinnedEl.checked = false;
+  submitBtn.textContent = 'Publicar';
+  cancelEditBtn.classList.add('hidden');
 }
 
 function updateHeaderState() {
@@ -136,7 +136,7 @@ loginForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = $('#login-email').value.trim();
   const pass = $('#login-pass').value.trim();
-  
+
   try {
     await signInWithEmailAndPassword(auth, email, pass);
     closeModal(loginOverlay, loginModal);
@@ -168,7 +168,7 @@ postForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!currentUser) return alert('Faça login.');
   if (!isAdmin) return alert('Sem permissão.');
-  
+
   const data = {
     title: titleEl.value.trim(),
     content: contentEl.value.trim(),
@@ -176,9 +176,9 @@ postForm?.addEventListener('submit', async (e) => {
     pinned: pinnedEl.checked,
     updatedAt: serverTimestamp()
   };
-  
+
   if (!data.title || !data.content) return alert('Preencha título e conteúdo.');
-  
+
   try {
     if (idEl.value) {
       // Editar
@@ -199,16 +199,16 @@ postForm?.addEventListener('submit', async (e) => {
 function handleEdit(id) {
   if (!currentUser) return alert('Faça login.');
   if (!isAdmin) return alert('Sem permissão.');
-  
+
   const post = postsCache.find(p => p.id === id);
   if (!post) return;
-  
-  idEl.value = post.id; 
-  titleEl.value = post.title; 
-  contentEl.value = post.content; 
-  categoryEl.value = post.category; 
+
+  idEl.value = post.id;
+  titleEl.value = post.title;
+  contentEl.value = post.content;
+  categoryEl.value = post.category;
   pinnedEl.checked = !!post.pinned;
-  submitBtn.textContent = 'Salvar edição'; 
+  submitBtn.textContent = 'Salvar edição';
   cancelEditBtn.classList.remove('hidden');
   openModal(postOverlay, postModal);
 }
@@ -217,7 +217,7 @@ async function handleDelete(id) {
   if (!currentUser) return alert('Faça login.');
   if (!isAdmin) return alert('Sem permissão.');
   if (!confirm('Excluir esta postagem?')) return;
-  
+
   try {
     await deleteDoc(doc(db, 'posts', id));
   } catch (error) {
@@ -228,14 +228,14 @@ async function handleDelete(id) {
 async function handlePin(id) {
   if (!currentUser) return alert('Faça login.');
   if (!isAdmin) return alert('Sem permissão.');
-  
+
   const post = postsCache.find(p => p.id === id);
   if (!post) return;
-  
+
   try {
-    await updateDoc(doc(db, 'posts', id), { 
-      pinned: !post.pinned, 
-      updatedAt: serverTimestamp() 
+    await updateDoc(doc(db, 'posts', id), {
+      pinned: !post.pinned,
+      updatedAt: serverTimestamp()
     });
   } catch (error) {
     alert('Erro ao fixar/desafixar: ' + error.message);
@@ -247,10 +247,10 @@ function makeExcerpt(text, limit = 320) {
   if (!text) return '';
   if (text.includes('<!--more-->')) return text.split('<!--more-->')[0].trim();
   if (text.includes('\n---\n')) return text.split('\n---\n')[0].trim();
-  
+
   const clean = text.trim().replace(/\s+/g, ' ');
   if (clean.length <= limit) return clean;
-  
+
   let cut = clean.slice(0, limit);
   const lastSpace = cut.lastIndexOf(' ');
   if (lastSpace > 150) cut = cut.slice(0, lastSpace);
@@ -261,7 +261,7 @@ function ensureShareUI() {
   // cria área de ações (copiar link / abrir) dentro do modal de leitura, se não existir
   let box = $('#view-share');
   if (box) return box;
-  
+
   box = document.createElement('div');
   box.className = 'actions';
   box.id = 'view-share';
@@ -275,7 +275,7 @@ function ensureShareUI() {
 
 function openView(post, push = true) {
   if (!post) return;
-  
+
   ensureShareUI();
   viewTitle.textContent = post.title;
   viewMeta.innerHTML = `
@@ -288,25 +288,25 @@ function openView(post, push = true) {
 
   // permalink
   const url = postURL(post);
-  const openA = $('#open-link'); 
+  const openA = $('#open-link');
   if (openA) openA.href = url;
-  
-  const copyBtn = $('#copy-link'); 
+
+  const copyBtn = $('#copy-link');
   if (copyBtn) {
     copyBtn.onclick = async () => {
-      try { 
-        await navigator.clipboard.writeText(url); 
-        copyBtn.textContent = 'Copiado!'; 
-        setTimeout(() => copyBtn.textContent = 'Copiar link', 1200); 
-      } catch { 
-        alert('Não foi possível copiar.'); 
+      try {
+        await navigator.clipboard.writeText(url);
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(() => copyBtn.textContent = 'Copiar link', 1200);
+      } catch {
+        alert('Não foi possível copiar.');
       }
     };
   }
-  
+
   openedSlug = post.slug || slugify(post.title);
   if (push) {
-    history.pushState({view: 'post', slug: openedSlug}, '', url);
+    history.pushState({ view: 'post', slug: openedSlug }, '', url);
   }
   openModal(viewOverlay, viewModal);
 }
@@ -323,91 +323,91 @@ function closeView(push = true) {
 }
 
 viewCloseBtn?.addEventListener('click', () => closeView());
-viewOverlay?.addEventListener('click', (e) => { 
-  if (e.target === viewOverlay) closeView(); 
+viewOverlay?.addEventListener('click', (e) => {
+  if (e.target === viewOverlay) closeView();
 });
 
 // deep-link via back/forward
 window.addEventListener('popstate', (e) => {
   const params = new URLSearchParams(location.search);
-  const slug = params.get('p'); 
+  const slug = params.get('p');
   const id = params.get('id');
-  
+
   if (!slug && !id) {
     // fechar se estava aberto
     if (openedSlug) closeView(false);
     return;
   }
-  
+
   // abrir o post correspondente
   const post = slug ? postsCache.find(x => (x.slug || slugify(x.title)) === slug)
-                   : postsCache.find(x => x.id === id);
+    : postsCache.find(x => x.id === id);
   if (post) openView(post, false);
 });
 
 // ---- List ----
 function renderCats() {
   if (!catFilterEl) return;
-  
+
   // Categorias padrão
   const defaultCategories = [
     'Dieta Low Carb',
-    'Vegetariana', 
+    'Vegetariana',
     'Vegana',
     'Esportiva',
     'Hábitos Saudáveis',
     'Receitas',
     'Dicas de Nutrição'
   ];
-  
+
   // Criar Set para categorias únicas
   const categorySet = new Set(defaultCategories);
-  
+
   // Adicionar categorias dos posts existentes
   postsCache.forEach(post => {
     if (post.category && post.category.trim()) {
       categorySet.add(post.category.trim());
     }
   });
-  
+
   // Converter para array e ordenar
   const categories = Array.from(categorySet).sort();
-  
+
   // Renderizar opções
   const options = ['<option value="">Todas as categorias</option>'];
   categories.forEach(category => {
     options.push(`<option value="${esc(category)}">${esc(category)}</option>`);
   });
-  
+
   catFilterEl.innerHTML = options.join('');
 }
 
 function render() {
   if (!listEl) return;
-  
+
   // Renderizar categorias sempre que renderizar a lista
   renderCats();
-  
+
   const searchQuery = (searchEl?.value || '').toLowerCase().trim();
   const selectedCategory = (catFilterEl?.value || '').trim();
   const sortOrder = (sortEl?.value || 'newest');
-  
+
   // Filtrar posts
   let filteredPosts = postsCache.filter(post => {
-    const matchesSearch = !searchQuery || 
-      post.title.toLowerCase().includes(searchQuery) || 
+    const matchesSearch = !searchQuery ||
+      post.title.toLowerCase().includes(searchQuery) ||
       post.content.toLowerCase().includes(searchQuery);
-    
+
     const matchesCategory = !selectedCategory || post.category === selectedCategory;
-    
+
     return matchesSearch && matchesCategory;
   });
-  
+
   // Ordenar posts
   filteredPosts.sort((a, b) => {
     // Posts fixados sempre no topo
     if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-    
+
     // Aplicar ordenação selecionada
     switch (sortOrder) {
       case 'oldest':
@@ -419,7 +419,7 @@ function render() {
         return b.createdAtMs - a.createdAtMs;
     }
   });
-  
+
   // Renderizar lista
   if (!filteredPosts.length) {
     listEl.innerHTML = '<p class="empty">Nenhuma postagem encontrada.</p>';
@@ -431,7 +431,7 @@ function render() {
     const slug = post.slug || slugify(post.title);
     const shareUrl = new URL(window.location.href);
     shareUrl.searchParams.set('p', slug);
-    
+
     return `
     <article class="card" data-id="${post.id}">
       <h3>${esc(post.title)}</h3>
@@ -440,7 +440,7 @@ function render() {
         <span>Publicado: ${fmt(post.createdAt)}</span>
         ${post.updatedAt ? `<span>Atualizado: ${fmt(post.updatedAt)}</span>` : ''}
         ${post.pinned ? '<span>📌 Fixado</span>' : ''}
-        <a href="${shareUrl.toString()}" class="btn btn-secondary" style="padding:4px 8px; font-size:.85rem;" data-action="share" data-slug="${slug}">🔗 Link</a>
+        <img src='../images/index/icone-de-compartilhamento.png' href="${shareUrl.toString()}" class="btn btn-secondary" style="padding:4px 8px; font-size:.85rem; height: 10px;" data-action="share" data-slug="${slug}"> </img>
       </div>
       <div class="content excerpt">${esc(excerpt)}</div>
       <div class="card-actions">
@@ -469,17 +469,17 @@ function attachCardEventListeners() {
       if (post) openView(post);
       return;
     }
-    
+
     const actionButton = e.target.closest('button[data-action]');
     if (!actionButton) return;
-    
+
     const card = actionButton.closest('.card');
     const postId = card?.dataset.id;
     const action = actionButton.dataset.action;
     const post = postsCache.find(x => x.id === postId);
-    
+
     if (!post) return;
-    
+
     switch (action) {
       case 'view':
         openView(post);
@@ -517,20 +517,20 @@ function initBlog() {
   onSnapshot(qRef, (snap) => {
     postsCache = snap.docs.map(doc => {
       const data = doc.data();
-      return { 
-        id: doc.id, 
-        ...data, 
-        createdAtMs: data.createdAt?.toMillis ? data.createdAt.toMillis() : 0 
+      return {
+        id: doc.id,
+        ...data,
+        createdAtMs: data.createdAt?.toMillis ? data.createdAt.toMillis() : 0
       };
     });
-    
+
     render();
 
     // Deep-link: se tiver ?p=slug ou ?id=...
     const params = new URLSearchParams(location.search);
-    const slug = params.get('p'); 
+    const slug = params.get('p');
     const id = params.get('id');
-    
+
     if (slug) {
       const post = postsCache.find(x => (x.slug || slugify(x.title)) === slug);
       if (post) openView(post, false);
