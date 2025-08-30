@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Banco de Receitas - NutriLife</title>
   <link rel="stylesheet" href="css/links/link.css">
+  <link rel="stylesheet" href="css/pages/Receitas.css">
   <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
   <!-- FontAwesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -36,22 +37,51 @@
   </nav>
   
   <main>
-
+    <section class="receitas-header">
+      <div class="container">
+        <h1>Banco de Receitas</h1>
+        <div class="receitas-actions">
+          <input type="text" id="search-receita" placeholder="Buscar receita, ingrediente ou tag..." autocomplete="off">
+          <button id="add-receita-btn" class="btn btn-primary"><i class="fa fa-plus"></i> Nova Receita</button>
+        </div>
+      </div>
+    </section>
+    <section id="receitas-list" class="receitas-grid container">
+      <!-- Cards de receitas serão inseridos aqui via JS -->
+    </section>
   </main>
 
-<!-- Modal de Detalhes da Receita -->
-<div id="modal-view-receita" class="modal" aria-hidden="true">
-  <header>
-    <h3 id="view-receita-titulo"></h3>
-    <button class="close-btn" type="button" aria-label="Fechar modal" onclick="closeViewReceitaModal()">Fechar</button>
-  </header>
-  <img id="view-receita-imagem" src="" alt="Imagem da receita" style="max-width:100%;border-radius:12px;margin-bottom:16px;display:none;">
-  <div class="tags" id="view-receita-tags"></div>
-  <h4>Ingredientes</h4>
-  <ul id="view-receita-ingredientes"></ul>
-  <h4>Modo de preparo</h4>
-  <p id="view-receita-modo"></p>
-</div>
+  <!-- Modal de Nova Receita -->
+  <div id="modal-add-receita" class="modal" aria-hidden="true">
+    <header>
+      <h3>Adicionar Receita</h3>
+      <button class="close-btn" type="button" aria-label="Fechar modal" onclick="closeAddReceitaModal()">Fechar</button>
+    </header>
+    <form id="form-add-receita" autocomplete="off">
+      <input type="text" id="receita-titulo" placeholder="Nome da receita" required>
+      <input type="text" id="receita-tags" placeholder="Tags (ex: fit, vegano, doce)" required>
+      <textarea id="receita-ingredientes" placeholder="Ingredientes (um por linha)" required></textarea>
+      <textarea id="receita-modo" placeholder="Modo de preparo" required></textarea>
+      <input type="file" id="receita-imagem" accept="image/*">
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">Salvar Receita</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal de Detalhes da Receita -->
+  <div id="modal-view-receita" class="modal" aria-hidden="true">
+    <header>
+      <h3 id="view-receita-titulo"></h3>
+      <button class="close-btn" type="button" aria-label="Fechar modal" onclick="closeViewReceitaModal()">Fechar</button>
+    </header>
+    <img id="view-receita-imagem" src="" alt="Imagem da receita" style="max-width:100%;border-radius:12px;margin-bottom:16px;display:none;">
+    <div class="tags" id="view-receita-tags"></div>
+    <h4>Ingredientes</h4>
+    <ul id="view-receita-ingredientes"></ul>
+    <h4>Modo de preparo</h4>
+    <p id="view-receita-modo"></p>
+  </div>
 
   <!-- Scripts -->
   <script src="js/firebase-config.js"></script>

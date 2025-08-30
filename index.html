@@ -8,6 +8,10 @@
   
   <!-- Estilos otimizados -->
   <link rel="stylesheet" href="css/links/link.css">
+  <link rel="stylesheet" href="css/pages/index.css">
+  <link rel="stylesheet" href="css/pages/blog.css">
+  <link rel="stylesheet" href="css/pages/blog_modal.css">
+
   <link rel="shortcut icon" href="images/favicon/favicon.ico" type="image/x-icon">
   
   <!-- FontAwesome para ícones -->
@@ -165,7 +169,7 @@
         <h2>Contato & Suporte</h2>
         <p class="subtitle">Tem dúvidas, sugestões ou feedback? Entre em contato conosco! Estamos aqui para ajudar você em sua jornada de saúde.</p>
         
-        <form class="contact-form" id="contact-form">
+        <form class="contact-form" action="https://formspree.io/f/xzzarbzj" method="POST" target="_blank">
           <div class="form-row">
             <div class="form-group">
               <label for="name">Nome Completo *</label>
@@ -176,7 +180,6 @@
               <input type="email" id="email" name="email" required>
             </div>
           </div>
-          
           <div class="form-group">
             <label for="subject">Assunto *</label>
             <select id="subject" name="subject" required>
@@ -188,15 +191,14 @@
               <option value="outro">Outro</option>
             </select>
           </div>
-          
           <div class="form-group">
             <label for="message">Mensagem *</label>
             <textarea id="message" name="message" placeholder="Descreva sua dúvida, sugestão ou feedback..." required></textarea>
           </div>
-          
           <button type="submit" class="submit-btn">
             <i class="fas fa-paper-plane"></i> Enviar Mensagem
           </button>
+          <p style="margin-top:1rem;color:var(--green-700);font-weight:600;display:none;" id="form-success-msg">Mensagem enviada! Obrigado pelo contato.</p>
         </form>
         
         <div class="contact-info">
