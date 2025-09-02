@@ -21,7 +21,13 @@ const auth = getAuth(app);
 // ---- DOM utils ----
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
-const esc = (s) => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+const esc = (s) => {
+  const base = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+  return String(s).replace(/[&<>"']/g, (m) => {
+    if (base[m]) return base[m];
+    return m === '"' ? '&quot;' : '&#39;';
+  });
+};
 const fmt = (ts) => ts?.toDate ? ts.toDate().toLocaleString() : "-";
 
 // ---- Elements ----
@@ -77,13 +83,19 @@ function toggle(el, state) {
 }
 
 function openModal(overlay, modal) {
-  toggle(overlay, true);
-  toggle(modal, true);
+  if (overlay) overlay.classList.add('active');
+  if (modal) {
+    modal.classList.add('active');
+    try { modal.setAttribute('aria-hidden', 'false'); } catch {}
+  }
 }
 
 function closeModal(overlay, modal) {
-  toggle(modal, false);
-  setTimeout(() => toggle(overlay, false), 50);
+  if (modal) {
+    modal.classList.remove('active');
+    try { modal.setAttribute('aria-hidden', 'true'); } catch {}
+  }
+  if (overlay) setTimeout(() => overlay.classList.remove('active'), 50);
 }
 
 function resetForm() {
@@ -115,6 +127,8 @@ onAuthStateChanged(auth, (user) => {
   currentUser = user;
   isAdmin = !!(user && ADMIN_UIDS.includes(user.uid));
   updateHeaderState();
+  // re-render para exibir/esconder ações de admin
+  try { render(); } catch {}
 });
 
 // ---- Event Listeners ----
@@ -386,7 +400,11 @@ function render() {
   if (!listEl) return;
 
   // Renderizar categorias sempre que renderizar a lista
-  renderCats();
+  if (typeof renderCatsFixed === 'function') {
+    renderCatsFixed();
+  } else {
+    renderCats();
+  }
 
   const searchQuery = (searchEl?.value || '').toLowerCase().trim();
   const selectedCategory = (catFilterEl?.value || '').trim();
@@ -455,29 +473,45 @@ function render() {
   }).join('');
 
   // Adicionar event listeners
+  relocateShareButtons();
   attachCardEventListeners();
 }
 
 // Função separada para event listeners dos cards
 function attachCardEventListeners() {
-  listEl.addEventListener('click', (e) => {
-    const shareLink = e.target.closest('a[data-action="share"]');
-    if (shareLink) {
+  if (!listEl || listEl.dataset.listenerAttached === '1') return;
+  listEl.dataset.listenerAttached = '1';
+
+  listEl.addEventListener('click', async (e) => {
+    const actionEl = e.target.closest('[data-action]');
+    if (!actionEl) return;
+
+    const action = actionEl.dataset.action;
+    if (action === 'share') {
       e.preventDefault();
-      const slug = shareLink.dataset.slug;
-      const post = postsCache.find(x => (x.slug || slugify(x.title)) === slug);
-      if (post) openView(post);
+      const url = actionEl.dataset.url || (() => {
+        const card = actionEl.closest('.card');
+        const post = postsCache.find(x => x.id === card?.dataset.id);
+        return post ? postURL(post) : window.location.href;
+      })();
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: document.title, url });
+        } else if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(url);
+          const old = actionEl.textContent;
+          actionEl.textContent = 'Copiado!';
+          setTimeout(() => actionEl.textContent = old || 'Compartilhar', 1200);
+        } else {
+          prompt('Copie o link:', url);
+        }
+      } catch { /* cancelado */ }
       return;
     }
 
-    const actionButton = e.target.closest('button[data-action]');
-    if (!actionButton) return;
-
-    const card = actionButton.closest('.card');
+    const card = actionEl.closest('.card');
     const postId = card?.dataset.id;
-    const action = actionButton.dataset.action;
     const post = postsCache.find(x => x.id === postId);
-
     if (!post) return;
 
     switch (action) {
@@ -495,6 +529,55 @@ function attachCardEventListeners() {
         break;
     }
   });
+}
+
+// Move o botão de compartilhar para a área de ações (entre Editar e Excluir)
+function relocateShareButtons() {
+  if (!listEl) return;
+  const cards = listEl.querySelectorAll('article.card');
+  cards.forEach(card => {
+    const metaShare = card.querySelector('.meta [data-action="share"]');
+    const actions = card.querySelector('.card-actions');
+    if (!actions) return;
+
+    // Já existe botão de compartilhar nas ações?
+    if (actions.querySelector('[data-action="share"]')) {
+      if (metaShare) metaShare.remove();
+      return;
+    }
+
+    // Criar botão e inserir
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-secondary';
+    btn.textContent = 'Compartilhar';
+    btn.dataset.action = 'share';
+
+    // pegar URL do share se existir no meta
+    if (metaShare?.getAttribute('href')) btn.dataset.url = metaShare.getAttribute('href');
+    if (metaShare?.dataset.slug) btn.dataset.slug = metaShare.dataset.slug;
+
+    const editBtn = actions.querySelector('[data-action="edit"]');
+    const deleteBtn = actions.querySelector('[data-action="delete"]');
+    if (editBtn) {
+      actions.insertBefore(btn, deleteBtn || editBtn.nextSibling);
+    } else {
+      const viewBtn = actions.querySelector('[data-action="view"]');
+      actions.insertBefore(btn, viewBtn?.nextSibling || actions.firstChild);
+    }
+    if (metaShare) metaShare.remove();
+  });
+}
+
+// Versão que preserva a seleção de categoria
+function renderCatsFixed() {
+  if (!catFilterEl) return;
+  const prev = catFilterEl.value;
+  const defaults = ['Dieta Low Carb','Vegetariana','Vegana','Esportiva','Hábitos Saudáveis','Receitas','Dicas de Nutrição'];
+  const set = new Set(defaults);
+  postsCache.forEach(p => { const c=(p.category||'').trim(); if(c) set.add(c); });
+  const categories = Array.from(set).sort((a,b)=>a.localeCompare(b));
+  catFilterEl.innerHTML = ['<option value="">Todas as categorias</option>']
+    .concat(categories.map(c=>`<option value="${esc(c)}"${c===prev?' selected':''}>${esc(c)}</option>`)).join('');
 }
 
 // ---- Utils ----

@@ -42,7 +42,15 @@
         <h1>Banco de Receitas</h1>
         <div class="receitas-actions">
           <input type="text" id="search-receita" placeholder="Buscar receita, ingrediente ou tag..." autocomplete="off">
-          <button id="add-receita-btn" class="btn btn-primary"><i class="fa fa-plus"></i> Nova Receita</button>
+          <select id="filter-tag" title="Filtrar por tag" aria-label="Filtrar por tag">
+            <option value="">Todas as tags</option>
+          </select>
+          <select id="filter-sort" title="Ordenar" aria-label="Ordenar">
+            <option value="newest">Mais recentes</option>
+            <option value="oldest">Mais antigas</option>
+            <option value="title">Título (A–Z)</option>
+          </select>
+          <button id="add-receita-btn" class="btn btn-primary" onclick="openAddReceitaModal()"><i class="fa fa-plus"></i> Nova Receita</button>
         </div>
       </div>
     </section>
@@ -58,12 +66,43 @@
       <button class="close-btn" type="button" aria-label="Fechar modal" onclick="closeAddReceitaModal()">Fechar</button>
     </header>
     <form id="form-add-receita" autocomplete="off">
-      <input type="text" id="receita-titulo" placeholder="Nome da receita" required>
-      <input type="text" id="receita-tags" placeholder="Tags (ex: fit, vegano, doce)" required>
-      <textarea id="receita-ingredientes" placeholder="Ingredientes (um por linha)" required></textarea>
-      <textarea id="receita-modo" placeholder="Modo de preparo" required></textarea>
-      <input type="file" id="receita-imagem" accept="image/*">
+      <label for="receita-titulo">Título</label>
+      <input type="text" id="receita-titulo" placeholder="Ex.: Panqueca de aveia" required>
+
+      <label for="tag-input">Tags</label>
+      <div class="chips-input">
+        <div id="tags-chips" class="chips" aria-live="polite"></div>
+        <input id="tag-input" type="text" list="tags-suggestions" placeholder="Digite e pressione Enter" aria-label="Adicionar tag">
+        <datalist id="tags-suggestions">
+          <option value="fit"></option>
+          <option value="vegano"></option>
+          <option value="vegetariano"></option>
+          <option value="low carb"></option>
+          <option value="doce"></option>
+          <option value="salgado"></option>
+          <option value="sem glúten"></option>
+          <option value="sem lactose"></option>
+          <option value="proteica"></option>
+          <option value="rápida"></option>
+        </datalist>
+        <input id="receita-tags" type="hidden" />
+      </div>
+
+      <label for="receita-ingredientes">Ingredientes</label>
+      <textarea id="receita-ingredientes" placeholder="Um ingrediente por linha" required></textarea>
+
+      <label for="receita-modo">Modo de preparo</label>
+      <textarea id="receita-modo" placeholder="Descreva o passo a passo" required></textarea>
+
+      <label>Imagem</label>
+      <div id="image-drop" class="dropzone" role="button" tabindex="0" aria-label="Adicionar imagem (arraste ou clique)">
+        <input type="file" id="receita-imagem" accept="image/*" hidden>
+        <img id="image-preview" alt="Prévia da imagem" style="max-width:100%;border-radius:10px;display:none;"/>
+        <span class="hint">Arraste uma imagem aqui ou clique para selecionar</span>
+      </div>
+
       <div class="actions">
+        <button type="button" class="btn btn-secondary" onclick="closeAddReceitaModal()">Cancelar</button>
         <button class="btn btn-primary" type="submit">Salvar Receita</button>
       </div>
     </form>
@@ -90,4 +129,4 @@
   <script src="js/navigation.js"></script>
   <script src="js/receitas.js"></script>
 </body>
-</html>
+</html

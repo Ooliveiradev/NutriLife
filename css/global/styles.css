@@ -66,15 +66,16 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.35);
-  z-index: 1000;
+  z-index: 90; /* abaixo do modal */
 }
 .modal-overlay.active { display: block; }
 
 .modal {
   display: none;
+  position: fixed;
+  z-index: 1001; /* acima do overlay */
 }
-.modal.active,
-.modal[aria-hidden="false"] { display: block; }
+.modal.active { display: grid; grid-template-rows: auto 1fr; }
 .modal[aria-hidden="true"] { display: none; }
 
 .container {

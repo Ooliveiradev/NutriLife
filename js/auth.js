@@ -34,14 +34,20 @@ function toggle(el, state) {
   el.classList[state ? 'add' : 'remove']('active'); 
 }
 
-function openModal(overlay, modal) { 
-  toggle(overlay, true); 
-  toggle(modal, true); 
+function openModal(overlay, modal) {
+  if (overlay) overlay.classList.add('active');
+  if (modal) {
+    modal.classList.add('active');
+    try { modal.setAttribute('aria-hidden', 'false'); } catch {}
+  }
 }
 
-function closeModal(overlay, modal) { 
-  toggle(modal, false); 
-  setTimeout(() => toggle(overlay, false), 50); 
+function closeModal(overlay, modal) {
+  if (modal) {
+    modal.classList.remove('active');
+    try { modal.setAttribute('aria-hidden', 'true'); } catch {}
+  }
+  if (overlay) setTimeout(() => overlay.classList.remove('active'), 50);
 }
 
 function updateHeaderState() {

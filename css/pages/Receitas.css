@@ -22,6 +22,12 @@
   align-items: center;
   gap: 12px;
 }
+.receitas-actions select {
+  padding: 10px 14px;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  background: var(--color-gray-light);
+}
 .receitas-actions input[type="text"] {
   width: 280px;
   max-width: 48vw;
@@ -98,6 +104,10 @@
   margin: 0 14px 14px 14px;
 }
 
+.card-actions { display: flex; gap: 8px; padding: 0 14px 14px 14px; flex-wrap: wrap; }
+.btn.btn-danger { background: #ef4444; color: #fff; }
+.btn.btn-danger:hover { background: #dc2626; }
+
 /* Modal */
 .modal[aria-hidden="true"] { display: none; }
 .modal[aria-hidden="false"] {
@@ -136,6 +146,7 @@
   display: grid;
   gap: 12px;
 }
+#modal-add-receita form label { font-weight: 600; color:#26324B; }
 #modal-add-receita form input[type="text"],
 #modal-add-receita form textarea, 
 #modal-add-receita form input[type="file"] {
@@ -150,6 +161,17 @@
   resize: vertical;
 }
 #modal-add-receita .actions { display: flex; justify-content: flex-end; }
+
+/* Chips (tags) */
+.chips-input { display: grid; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap:6px; background:#eef6ff; color:#0f4c81; border:1px solid #cfe3ff; padding:4px 8px; border-radius:999px; }
+.chip button { background:transparent; border:none; color:#0f4c81; cursor:pointer; font-size:14px; }
+
+/* Dropzone */
+.dropzone { border:2px dashed #c8d1dc; border-radius:12px; padding:14px; text-align:center; color:#6b7a8a; background:#f8fafc; cursor:pointer; }
+.dropzone.dragover { background:#eef6ff; border-color:#9ec5fe; color:#0f4c81; }
+.dropzone .hint { display:block; font-size:0.9rem; }
 
 #modal-view-receita .tags { margin-bottom: 8px; }
 #modal-view-receita .tags .tag { 
