@@ -1,158 +1,214 @@
-// Banco de Receitas - NutriLife (refatorado + recursos)
-(() => {
-  const LS_KEY = 'nutrilife_receitas';
-  const $ = (s, el=document) => el.querySelector(s);
-  const grid = $('#receitas-list');
-  const searchEl = $('#search-receita');
-  const tagFilterEl = $('#filter-tag');
-  const sortEl = $('#filter-sort');
-  const addBtn = $('#add-receita-btn');
-  // Modal elements for new UI
-  const chipsBox = document.getElementById('tags-chips');
-  const tagInput = document.getElementById('tag-input');
-  const hiddenTags = document.getElementById('receita-tags');
-  const drop = document.getElementById('image-drop');
-  const imgInput = document.getElementById('receita-imagem');
-  const preview = document.getElementById('image-preview');
+﻿// Multi-tag selection (chips) for filter and add-recipe
+// - Selected tag turns into a chip with a hover X to remove
+// - Selected tag is removed from the available datalist
+// - Removing a chip returns the tag to the datalist (if it was originally there)
 
-  let cache = [];
-  const DEFAULT_TAGS = ['fit','vegano','vegetariano','low carb','doce','salgado','sem glúten','sem lactose','proteica','rápida'];
-  let currentTags = [];
-  const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
-  const now = () => new Date().toISOString();
-  const save = () => localStorage.setItem(LS_KEY, JSON.stringify(cache));
-  const load = () => { try { cache = JSON.parse(localStorage.getItem(LS_KEY)||'[]'); } catch { cache=[]; } let ch=false; cache.forEach(r=>{ if(!r.id){ r.id=uid(); ch=true; } if(!r.createdAt){ r.createdAt=now(); ch=true; }}); if(ch) save(); };
+// Expose modal helpers early so inline onclick works reliably
+window.openAddReceitaModal = function () {
+  const addModal = qs('#modal-add-receita');
+  if (addModal) {
+    addModal.setAttribute('aria-hidden', 'false');
+    addModal.classList.add('active');
+    document.body.classList.add('modal-open');
+  }
+};
+window.closeAddReceitaModal = function () {
+  const addModal = qs('#modal-add-receita');
+  if (addModal) {
+    addModal.classList.remove('active');
+    addModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+};
+window.closeViewReceitaModal = function () {
+  const viewModal = qs('#modal-view-receita');
+  if (viewModal) {
+    viewModal.classList.remove('active');
+    viewModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+};
 
-  function renderFilters(){
-    if(!tagFilterEl) return;
-    const prev = tagFilterEl.value;
-    const set = new Set(DEFAULT_TAGS);
-    cache.forEach(r => (r.tags||[]).forEach(t=>set.add(t)));
-    const tags = Array.from(set).sort((a,b)=>a.localeCompare(b));
-    tagFilterEl.innerHTML = ['<option value="">Todas as tags</option>'].concat(tags.map(t=>`<option value="${t}">${t}</option>`)).join('');
-    if(tags.includes(prev)) tagFilterEl.value = prev;
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = qs('#search-receita');
+  const sortSelect = qs('#filter-sort');
 
-  // Tags (chips)
-  function syncHiddenTags(){ hiddenTags && (hiddenTags.value = currentTags.join(', ')); }
-  function renderChips(){
-    if(!chipsBox) return;
-    chipsBox.innerHTML = currentTags.map(t=>`<span class="chip" data-tag="${t}">${t}<button type="button" aria-label="Remover ${t}">×</button></span>`).join('');
-  }
-  function addTag(tag){
-    tag = (tag||'').trim();
-    if(!tag) return;
-    if(!currentTags.includes(tag)) currentTags.push(tag);
-    renderChips(); syncHiddenTags();
-  }
-  function removeTag(tag){
-    currentTags = currentTags.filter(t=>t!==tag);
-    renderChips(); syncHiddenTags();
-  }
-  tagInput?.addEventListener('keydown', (e)=>{
-    if(e.key==='Enter' || e.key===',' ){ e.preventDefault(); addTag(tagInput.value); tagInput.value=''; }
+  const filterChips = initChips({
+    inputSelector: '#filter-tag-input',
+    chipsSelector: '#filter-tags-chips',
+    datalistSelector: '#filter-tags-datalist',
+    onChange: () => updateFilter()
   });
-  tagInput?.addEventListener('blur', ()=>{ if(tagInput.value.trim()) { addTag(tagInput.value); tagInput.value=''; } });
-  chipsBox?.addEventListener('click', (e)=>{ const chip=e.target.closest('.chip'); if(chip && e.target.tagName==='BUTTON'){ removeTag(chip.dataset.tag); }});
 
-  // Dropzone (imagem)
-  function setPreview(src){ if(preview){ if(src){ preview.src=src; preview.style.display='block'; } else { preview.removeAttribute('src'); preview.style.display='none'; } } }
-  function readFile(file){ if(!file) return; const reader=new FileReader(); reader.onload=ev=> setPreview(ev.target.result); reader.readAsDataURL(file); }
-  drop?.addEventListener('click', ()=> imgInput?.click());
-  drop?.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); imgInput?.click(); }});
-  drop?.addEventListener('dragover', (e)=>{ e.preventDefault(); drop.classList.add('dragover'); });
-  drop?.addEventListener('dragleave', ()=> drop.classList.remove('dragover'));
-  drop?.addEventListener('drop', (e)=>{ e.preventDefault(); drop.classList.remove('dragover'); const file=e.dataTransfer.files?.[0]; if(file) { imgInput.files = e.dataTransfer.files; readFile(file); } });
-  imgInput?.addEventListener('change', ()=>{ const file = imgInput.files?.[0]; readFile(file); });
+  const formChips = initChips({
+    inputSelector: '#tag-input',
+    chipsSelector: '#tags-chips',
+    datalistSelector: '#form-tags-datalist',
+    hiddenSelector: '#receita-tags'
+  });
 
-  function cardHTML(r){
-    return `
-    <article class="receita-card" data-id="${r.id}">
-      ${r.imagem?`<img src="${r.imagem}" alt="Imagem da receita">`:''}
-      <div class="tags">${(r.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-      <h3>${r.titulo}</h3>
-      <div class="ingredientes">${(r.ingredientes||[]).slice(0,3).join(', ')}${(r.ingredientes||[]).length>3?'...':''}</div>
-      <div class="card-actions">
-        <button class="btn btn-secondary" data-action="view">Ver</button>
-        <button class="btn btn-secondary" data-action="edit">Editar</button>
-        <button class="btn btn-danger" data-action="delete">Excluir</button>
-        <button class="btn btn-secondary" data-action="share">Compartilhar</button>
-      </div>
-    </article>`;
+  if (searchInput) searchInput.addEventListener('input', updateFilter);
+  if (sortSelect) sortSelect.addEventListener('change', updateFilter);
+
+  function updateFilter() {
+    const text = searchInput ? searchInput.value.trim() : '';
+    const tags = filterChips.getSelected();
+    const sort = sortSelect ? sortSelect.value : 'newest';
+    const listEl = qs('#receitas-list');
+    if (listEl) {
+      listEl.dataset.search = text;
+      listEl.dataset.tags = JSON.stringify(tags);
+      listEl.dataset.sort = sort;
+    }
+    document.dispatchEvent(new CustomEvent('receitas:filter', { detail: { text, tags, sort } }));
   }
 
-  function render(){
-    if(!grid) return; renderFilters();
-    const q = (searchEl?.value||'').toLowerCase();
-    const tag = tagFilterEl?.value || '';
-    const sort = sortEl?.value || 'newest';
-    let list = cache.filter(r=>{
-      const inQ = !q || (r.titulo||'').toLowerCase().includes(q) || (r.modo||'').toLowerCase().includes(q) || (r.tags||[]).some(t=>t.toLowerCase().includes(q)) || (r.ingredientes||[]).some(i=>i.toLowerCase().includes(q));
-      const inTag = !tag || (r.tags||[]).includes(tag);
-      return inQ && inTag;
-    });
-    list.sort((a,b)=>{ if(sort==='title') return (a.titulo||'').localeCompare(b.titulo||''); if(sort==='oldest') return (a.createdAt||'').localeCompare(b.createdAt||''); return (b.createdAt||'').localeCompare(a.createdAt||''); });
-    if(!list.length){ grid.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#64748b;">Nenhuma receita encontrada.</p>'; return; }
-    grid.innerHTML = list.map(cardHTML).join('');
-  }
-
-  // Modais
-  const addModal = document.getElementById('modal-add-receita');
-  const addForm = document.getElementById('form-add-receita');
-  const viewModal = document.getElementById('modal-view-receita');
-  function openAddModal(r=null){
-    addModal.setAttribute('aria-hidden','false');
-    document.body.style.overflow='hidden';
-    addForm.dataset.editing = r?.id || '';
-    document.getElementById('receita-titulo').value = r?.titulo || '';
-    currentTags = (r?.tags||[]).slice(); renderChips(); syncHiddenTags(); tagInput && (tagInput.value='');
-    document.getElementById('receita-ingredientes').value = (r?.ingredientes||[]).join('\n');
-    document.getElementById('receita-modo').value = r?.modo || '';
-    if (imgInput) imgInput.value='';
-    setPreview(r?.imagem || '');
-  }
-  function closeAddModal(){ addModal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; addForm.reset(); addForm.dataset.editing=''; }
-  function openViewModal(r){ document.getElementById('view-receita-titulo').textContent=r.titulo; const img=document.getElementById('view-receita-imagem'); if(r.imagem){ img.src=r.imagem; img.style.display=''; } else { img.style.display='none'; } const tagsDiv=document.getElementById('view-receita-tags'); tagsDiv.innerHTML=''; (r.tags||[]).forEach(t=>{ const s=document.createElement('span'); s.className='tag'; s.textContent=t; tagsDiv.appendChild(s); }); const ul=document.getElementById('view-receita-ingredientes'); ul.innerHTML=''; (r.ingredientes||[]).forEach(i=>{ const li=document.createElement('li'); li.textContent=i; ul.appendChild(li); }); document.getElementById('view-receita-modo').textContent=r.modo||''; viewModal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; const url=new URL(location.href); url.searchParams.set('r', r.id); history.replaceState({},'',url); }
-  function closeViewModal(){ viewModal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; const url=new URL(location.href); url.searchParams.delete('r'); history.replaceState({},'',url); }
-
-  // CRUD helpers
-  function upsert(rec){ const idx=cache.findIndex(x=>x.id===rec.id); if(idx>=0){ rec.updatedAt=now(); cache[idx]=rec; } else { rec.id=rec.id||uid(); rec.createdAt=now(); cache.unshift(rec); } save(); render(); }
-  function remove(id){ cache=cache.filter(r=>r.id!==id); save(); render(); }
-  function byId(id){ return cache.find(r=>r.id===id); }
-
-  // Events
-  addBtn?.addEventListener('click', ()=>openAddModal());
-  addModal?.addEventListener('click', (e)=>{ if(e.target===addModal) closeAddModal(); });
-  viewModal?.addEventListener('click', (e)=>{ if(e.target===viewModal) closeViewModal(); });
-  window.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeAddModal(); closeViewModal(); }});
-
-  addForm?.addEventListener('submit', (e)=>{
+  // Also wire the add button in case inline handler is removed
+  const addBtn = qs('#add-receita-btn');
+  if (addBtn) addBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    const titulo = document.getElementById('receita-titulo').value.trim();
-    const tags = currentTags.slice();
-    const ingredientes = document.getElementById('receita-ingredientes').value.split('\n').map(i=>i.trim()).filter(Boolean);
-    const modo = document.getElementById('receita-modo').value.trim();
-    const file = imgInput?.files?.[0];
-    if(!titulo || !ingredientes.length || !modo){ alert('Preencha título, ingredientes e modo.'); return; }
-    const commit = (img)=>{ const id=addForm.dataset.editing||null; const prev=id?byId(id):{}; upsert({ id, titulo, tags, ingredientes, modo, imagem: (img!==undefined? img : prev.imagem) }); closeAddModal(); };
-    if(file){ const reader=new FileReader(); reader.onload=ev=>commit(ev.target.result); reader.readAsDataURL(file); }
-    else commit(undefined);
+    window.openAddReceitaModal();
   });
 
-  grid?.addEventListener('click', async (e)=>{ const card=e.target.closest('.receita-card'); if(!card) return; const id=card.dataset.id; const r=byId(id); if(!r) return; const act=e.target.closest('[data-action]')?.dataset.action||'view'; if(act==='view') openViewModal(r); else if(act==='edit') openAddModal(r); else if(act==='delete'){ if(confirm('Excluir esta receita?')) remove(id); } else if(act==='share'){ const url=new URL(location.href); url.searchParams.set('r', id); try{ if(navigator.share) await navigator.share({ title:r.titulo, url:url.toString()}); else { await navigator.clipboard.writeText(url.toString()); e.target.textContent='Copiado!'; setTimeout(()=>e.target.textContent='Compartilhar',1200); } } catch{} }});
+  // Close on backdrop click and ESC
+  const addModal = qs('#modal-add-receita');
+  const viewModal = qs('#modal-view-receita');
+  [addModal, viewModal].forEach(modal => {
+    if (!modal) return;
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+      }
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      [qs('#modal-add-receita'), qs('#modal-view-receita')].forEach(m => {
+        if (m && m.classList.contains('active')) {
+          m.classList.remove('active');
+          m.setAttribute('aria-hidden', 'true');
+        }
+      });
+      document.body.classList.remove('modal-open');
+    }
+  });
+});
 
-  searchEl?.addEventListener('input', (()=>{ let t; return ()=>{ clearTimeout(t); t=setTimeout(render,150); }; })());
-  tagFilterEl?.addEventListener('change', render);
-  sortEl?.addEventListener('change', render);
+function initChips({ inputSelector, chipsSelector, datalistSelector, hiddenSelector, onChange }) {
+  const input = qs(inputSelector);
+  const chipsContainer = qs(chipsSelector);
+  const datalist = qs(datalistSelector);
+  const hidden = hiddenSelector ? qs(hiddenSelector) : null;
+  const selected = [];
 
-  
+  const initialSet = new Set();
+  if (datalist) {
+    Array.from(datalist.options).forEach(opt => {
+      if (opt && typeof opt.value === 'string') initialSet.add(opt.value.toLowerCase());
+    });
+  }
 
-  function openFromURL(){ const id=(new URL(location.href)).searchParams.get('r'); if(id){ const r=byId(id); if(r) openViewModal(r); } }
+  function normalize(val) { return (val || '').trim(); }
+  function containsCaseInsensitive(arr, value) {
+    const v = value.toLowerCase();
+    return arr.some(x => x.toLowerCase() === v);
+  }
 
-  window.addEventListener('DOMContentLoaded', ()=>{ load(); render(); openFromURL(); });
+  function syncHidden() {
+    if (hidden) hidden.value = selected.join(',');
+  }
 
-  // Suporte a botões inline do HTML
-  window.closeAddReceitaModal = () => closeAddModal();
-  window.closeViewReceitaModal = () => closeViewModal();
-  window.openAddReceitaModal = () => openAddModal();
-})();
+  function removeOptionFromDatalist(value) {
+    if (!datalist) return;
+    const vLower = value.toLowerCase();
+    const opt = Array.from(datalist.options).find(o => (o.value || '').toLowerCase() === vLower);
+    if (opt) datalist.removeChild(opt);
+  }
+
+  function addOptionBackToDatalist(value) {
+    if (!datalist) return;
+    const vLower = value.toLowerCase();
+    if (!initialSet.has(vLower)) return; // only restore if it was originally available
+    const exists = Array.from(datalist.options).some(o => (o.value || '').toLowerCase() === vLower);
+    if (exists) return;
+    const opt = document.createElement('option');
+    opt.value = value;
+    datalist.appendChild(opt);
+  }
+
+  function renderChip(value) {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.setAttribute('data-value', value);
+    chip.title = value;
+
+    const text = document.createElement('span');
+    text.textContent = value;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'remove';
+    btn.setAttribute('aria-label', `Remover tag ${value}`);
+    btn.textContent = 'x';
+
+    btn.addEventListener('click', () => {
+      const idx = selected.findIndex(x => x.toLowerCase() === value.toLowerCase());
+      if (idx >= 0) selected.splice(idx, 1);
+      addOptionBackToDatalist(value);
+      chip.remove();
+      syncHidden();
+      if (typeof onChange === 'function') onChange(selected.slice());
+    });
+
+    chip.appendChild(text);
+    chip.appendChild(btn);
+    if (chipsContainer) chipsContainer.appendChild(chip);
+  }
+
+  function addTag(value) {
+    const val = normalize(value);
+    if (!val) return;
+    if (containsCaseInsensitive(selected, val)) {
+      if (input) input.value = '';
+      return;
+    }
+    selected.push(val);
+    removeOptionFromDatalist(val);
+    renderChip(val);
+    syncHidden();
+    if (input) input.value = '';
+    if (typeof onChange === 'function') onChange(selected.slice());
+  }
+
+  if (input) {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addTag(input.value);
+      } else if (e.key === ',' || e.key === ';') {
+        e.preventDefault();
+        const parts = input.value.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+        if (parts.length) parts.forEach(p => addTag(p));
+      }
+    });
+    input.addEventListener('change', () => {
+      if (input.value) addTag(input.value);
+    });
+    input.addEventListener('blur', () => {
+      if (input.value) addTag(input.value);
+    });
+    input.setAttribute('autocomplete', 'off');
+  }
+
+  return {
+    getSelected: () => selected.slice(),
+    addTag
+  };
+}
+
+function qs(sel, root) {
+  return (root || document).querySelector(sel);
+}
+

@@ -40,6 +40,7 @@ function openModal(overlay, modal) {
     modal.classList.add('active');
     try { modal.setAttribute('aria-hidden', 'false'); } catch {}
   }
+  try { document.body.classList.add('modal-open'); } catch {}
 }
 
 function closeModal(overlay, modal) {
@@ -48,6 +49,7 @@ function closeModal(overlay, modal) {
     try { modal.setAttribute('aria-hidden', 'true'); } catch {}
   }
   if (overlay) setTimeout(() => overlay.classList.remove('active'), 50);
+  try { document.body.classList.remove('modal-open'); } catch {}
 }
 
 function updateHeaderState() {
@@ -103,3 +105,10 @@ loginForm?.addEventListener('submit', async (e) => {
     alert('Falha no login: ' + error.message);
   }
 }); 
+
+// Accessibility: close login modal on ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && loginModal?.classList.contains('active')) {
+    closeModal(loginOverlay, loginModal);
+  }
+});

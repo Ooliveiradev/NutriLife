@@ -343,3 +343,7 @@ nav ul li a:hover {
 .shadow-light { box-shadow: var(--shadow-light); }
 .shadow-medium { box-shadow: var(--shadow-medium); }
 .shadow-heavy { box-shadow: var(--shadow-heavy); }
+
+/* Prevent background scroll when modal open */
+body.modal-open { overflow: hidden; }
+

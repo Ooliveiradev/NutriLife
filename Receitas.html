@@ -42,9 +42,23 @@
         <h1>Banco de Receitas</h1>
         <div class="receitas-actions">
           <input type="text" id="search-receita" placeholder="Buscar receita, ingrediente ou tag..." autocomplete="off">
-          <select id="filter-tag" title="Filtrar por tag" aria-label="Filtrar por tag">
+          <select id="filter-tag" title="Filtrar por tag" aria-label="Filtrar por tag" style="display:none">
             <option value="">Todas as tags</option>
           </select>
+          <div id="filter-tags-chips" class="chips" aria-live="polite"></div>
+          <input id="filter-tag-input" type="text" list="filter-tags-datalist" placeholder="Filtrar por tag..." aria-label="Adicionar tag de filtro" style="max-width:180px;">
+          <datalist id="filter-tags-datalist">
+            <option value="fit"></option>
+            <option value="vegano"></option>
+            <option value="vegetariano"></option>
+            <option value="low carb"></option>
+            <option value="doce"></option>
+            <option value="salgado"></option>
+            <option value="sem glúten"></option>
+            <option value="sem lactose"></option>
+            <option value="proteica"></option>
+            <option value="rápida"></option>
+          </datalist>
           <select id="filter-sort" title="Ordenar" aria-label="Ordenar">
             <option value="newest">Mais recentes</option>
             <option value="oldest">Mais antigas</option>
@@ -60,11 +74,7 @@
   </main>
 
   <!-- Modal de Nova Receita -->
-  <div id="modal-add-receita" class="modal" aria-hidden="true">
-    <header>
-      <h3>Adicionar Receita</h3>
-      <button class="close-btn" type="button" aria-label="Fechar modal" onclick="closeAddReceitaModal()">Fechar</button>
-    </header>
+  <div id="modal-add-receita" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <form id="form-add-receita" autocomplete="off">
       <label for="receita-titulo">Título</label>
       <input type="text" id="receita-titulo" placeholder="Ex.: Panqueca de aveia" required>
@@ -72,8 +82,8 @@
       <label for="tag-input">Tags</label>
       <div class="chips-input">
         <div id="tags-chips" class="chips" aria-live="polite"></div>
-        <input id="tag-input" type="text" list="tags-suggestions" placeholder="Digite e pressione Enter" aria-label="Adicionar tag">
-        <datalist id="tags-suggestions">
+        <input id="tag-input" type="text" list="form-tags-datalist" placeholder="Digite e pressione Enter" aria-label="Adicionar tag">
+        <datalist id="form-tags-datalist">
           <option value="fit"></option>
           <option value="vegano"></option>
           <option value="vegetariano"></option>
@@ -109,7 +119,7 @@
   </div>
 
   <!-- Modal de Detalhes da Receita -->
-  <div id="modal-view-receita" class="modal" aria-hidden="true">
+  <div id="modal-view-receita" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <header>
       <h3 id="view-receita-titulo"></h3>
       <button class="close-btn" type="button" aria-label="Fechar modal" onclick="closeViewReceitaModal()">Fechar</button>
@@ -129,4 +139,4 @@
   <script src="js/navigation.js"></script>
   <script src="js/receitas.js"></script>
 </body>
-</html
+</html>
