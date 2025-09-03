@@ -176,3 +176,30 @@ Este projeto estÃ¡ sob a licenÃ§a MIT. Veja o arquivo `LICENSE` para mais detalh
 ---
 
 **NutriLife** - Transformando vidas atravÃ©s da nutriÃ§Ã£o consciente! ðŸŒ± 
+
+## Lista de Compras (SPA)
+
+Arquivos principais:
+- `lista.html` (página SPA)
+- `css/pages/shopping-list.css` (estilos + @media print)
+- `js/shopping/*` (módulos: firebase, app, recipes, aggregation, ingredients, exporters, ui)
+- `data/sample-recipes.json` (fallback de receitas)
+- `firestore.rules` (regras do Firestore)
+
+Config Firebase:
+- Defina `window.NUTRILIFE_FIREBASE_CONFIG` no `<head>` (ou reaproveite `window.FIREBASE_CONFIG`).
+- O módulo `js/shopping/firebase.js` usa Firebase v9 modular (CDN) e habilita persistência offline quando possível.
+
+Como rodar localmente:
+- Sirva o diretório (ex.: `npx serve`).
+- Abra `http://localhost:3000/lista.html`.
+
+Regras de segurança:
+- `users/{uid}`: somente o próprio usuário lê/escreve.
+- `users/{uid}/lists/{listId}`: somente `uid` acessa; valida campos básicos.
+- `recipes/{id}`: leitura pública; escrita apenas se `request.auth.token.admin == true`.
+
+Conversões de unidades:
+- Aproximações culinárias documentadas em `js/shopping/aggregation.js`.
+- Para sólidos, base em `g`; líquidos em `ml`.
+

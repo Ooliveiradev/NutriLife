@@ -1,0 +1,125 @@
+[
+  {
+    "id": "r1",
+    "name": "Salada de Grão-de-bico",
+    "tags": ["vegetariano", "rápido", "barato"],
+    "time": 15,
+    "portion": 2,
+    "kcal": 480,
+    "ingredients": [
+      { "name": "grão-de-bico cozido", "qty": 300, "unit": "g" },
+      { "name": "tomate", "qty": 2, "unit": "un" },
+      { "name": "cebola", "qty": 0.5, "unit": "un" },
+      { "name": "azeite", "qty": 2, "unit": "tbsp" },
+      { "name": "sal", "qty": 1, "unit": "tsp" }
+    ],
+    "steps": ["Picar legumes", "Misturar com grão-de-bico", "Temperar"]
+  },
+  {
+    "id": "r2",
+    "name": "Frango grelhado com arroz",
+    "tags": ["rápido", "proteica"],
+    "time": 25,
+    "portion": 2,
+    "kcal": 700,
+    "ingredients": [
+      { "name": "peito de frango", "qty": 400, "unit": "g" },
+      { "name": "arroz", "qty": 1, "unit": "cup" },
+      { "name": "azeite", "qty": 1, "unit": "tbsp" },
+      { "name": "sal", "qty": 1, "unit": "tsp" }
+    ],
+    "steps": ["Grelhar frango", "Cozinhar arroz", "Servir"]
+  },
+  {
+    "id": "r3",
+    "name": "Panqueca de Aveia",
+    "tags": ["barato", "rápido", "sem lactose"],
+    "time": 20,
+    "portion": 2,
+    "kcal": 520,
+    "ingredients": [
+      { "name": "aveia", "qty": 1, "unit": "cup" },
+      { "name": "leite", "qty": 1, "unit": "cup" },
+      { "name": "ovo", "qty": 2, "unit": "un" },
+      { "name": "açúcar", "qty": 1, "unit": "tbsp" },
+      { "name": "sal", "qty": 0.25, "unit": "tsp" }
+    ],
+    "steps": ["Bater tudo", "Dourar em frigideira"]
+  },
+  {
+    "id": "r4",
+    "name": "Bowl Low Carb",
+    "tags": ["low carb", "rápido"],
+    "time": 15,
+    "portion": 1,
+    "kcal": 430,
+    "ingredients": [
+      { "name": "alface", "qty": 100, "unit": "g" },
+      { "name": "tomate", "qty": 1, "unit": "un" },
+      { "name": "ovo", "qty": 2, "unit": "un" },
+      { "name": "azeite", "qty": 1, "unit": "tbsp" }
+    ],
+    "steps": ["Montar bowl", "Temperar"]
+  },
+  {
+    "id": "r5",
+    "name": "Risoto simples",
+    "tags": ["barato"],
+    "time": 40,
+    "portion": 3,
+    "kcal": 900,
+    "ingredients": [
+      { "name": "arroz", "qty": 2, "unit": "cup" },
+      { "name": "cebola", "qty": 1, "unit": "un" },
+      { "name": "manteiga", "qty": 1, "unit": "tbsp" },
+      { "name": "sal", "qty": 1, "unit": "tsp" }
+    ],
+    "steps": ["Refogar", "Cozinhar", "Finalizar"]
+  },
+  {
+    "id": "r6",
+    "name": "Iogurte com Granola",
+    "tags": ["rápido", "barato"],
+    "time": 5,
+    "portion": 1,
+    "kcal": 280,
+    "ingredients": [
+      { "name": "iogurte", "qty": 170, "unit": "g" },
+      { "name": "granola", "qty": 0.5, "unit": "cup" },
+      { "name": "açúcar", "qty": 1, "unit": "tsp" }
+    ],
+    "steps": ["Montar e servir"]
+  },
+  {
+    "id": "r7",
+    "name": "Sopa de Legumes",
+    "tags": ["vegetariano", "sem lactose"],
+    "time": 35,
+    "portion": 4,
+    "kcal": 650,
+    "ingredients": [
+      { "name": "batata", "qty": 2, "unit": "un" },
+      { "name": "cenoura", "qty": 2, "unit": "un" },
+      { "name": "cebola", "qty": 1, "unit": "un" },
+      { "name": "azeite", "qty": 1, "unit": "tbsp" },
+      { "name": "sal", "qty": 1, "unit": "tsp" }
+    ],
+    "steps": ["Cozinhar legumes", "Temperar"]
+  },
+  {
+    "id": "r8",
+    "name": "Arroz integral com legumes",
+    "tags": ["vegetariano", "barato"],
+    "time": 35,
+    "portion": 3,
+    "kcal": 780,
+    "ingredients": [
+      { "name": "arroz integral", "qty": 1.5, "unit": "cup" },
+      { "name": "tomate", "qty": 1, "unit": "un" },
+      { "name": "cebola", "qty": 1, "unit": "un" },
+      { "name": "azeite", "qty": 1, "unit": "tbsp" }
+    ],
+    "steps": ["Refogar", "Cozinhar", "Servir"]
+  }
+]
+

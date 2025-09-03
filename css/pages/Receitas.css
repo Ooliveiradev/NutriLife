@@ -44,6 +44,30 @@
   box-shadow: 0 0 0 3px rgba(80, 160, 85, 0.1);
 }
 
+/* Responsividade - cabeçalho e ações */
+@media (max-width: 920px) {
+  .receitas-header .container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .receitas-actions {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 680px) {
+  .receitas-actions input[type="text"],
+  .receitas-actions select,
+  .receitas-actions button,
+  #filter-tag-input {
+    width: 100%;
+    max-width: 100%;
+  }
+  #filter-tags-chips {
+    width: 100%;
+  }
+}
+
 /* Grid */
 .receitas-grid {
   display: grid;

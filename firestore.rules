@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Perfil do usuário
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid &&
+        request.resource.data.keys().hasOnly(['displayName','email','createdAt']) &&
+        request.resource.data.displayName is string &&
+        request.resource.data.email is string;
+    }
+
+    // Listas salvas por usuário: users/{uid}/lists/{listId}
+    match /users/{uid}/lists/{listId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid &&
+        (request.resource.data.owner == uid || resource.data.owner == uid);
+
+      // Validações básicas
+      allow create: if request.auth != null && request.auth.uid == uid &&
+        request.resource.data.owner == uid &&
+        request.resource.data.name is string &&
+        request.resource.data.plan is map &&
+        request.resource.data.items is list;
+    }
+
+    // Catálogo de receitas: leitura pública, escrita apenas admin
+    match /recipes/{recipeId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+  }
+}

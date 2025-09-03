@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
     'imc.html': 'IMC.html',
     'cal.html': 'Cal.html',
     'receitas.html': 'Receitas.html',
-    'diario.html': 'Diario.html'
+    'diario.html': 'Diario.html',
+    'lista.html': 'Lista.html'
   };
 
   // Se estiver no GitHub Pages, ajusta os hrefs para casar com os arquivos publicados
@@ -41,4 +42,3 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
-
