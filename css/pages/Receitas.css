@@ -91,7 +91,7 @@
   box-shadow: 0 0 0 3px rgba(80, 160, 85, 0.1);
 }
 
-/* Responsividade - cabeçalho e ações */
+/* Responsividade - cabe�alho e a��es */
 @media (max-width: 920px) {
   .receitas-header .container {
     flex-direction: column;
@@ -194,6 +194,59 @@
   backdrop-filter: blur(8px);
   padding: 2rem;
   transition: background 0.2s;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  padding-bottom: 0.5rem;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  transition: background 0.2s;
 }
 .modal > * {
   background: #fff;
@@ -237,7 +290,7 @@
   color: #dc3545;
   background: #f8f9fa;
 }
-/* Formulário de Nova Receita */
+/* Formul�rio de Nova Receita */
 #form-add-receita label {
   font-weight: 600;
   color: #26324B;
